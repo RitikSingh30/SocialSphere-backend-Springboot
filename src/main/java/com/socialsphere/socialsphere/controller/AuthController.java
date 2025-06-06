@@ -1,7 +1,10 @@
 package com.socialsphere.socialsphere.controller;
 
+import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
+import com.socialsphere.socialsphere.exception.TokenException;
 import com.socialsphere.socialsphere.payload.LoginDto;
+import com.socialsphere.socialsphere.payload.RefreshTokenDto;
 import com.socialsphere.socialsphere.payload.SignupDto;
 import com.socialsphere.socialsphere.payload.response.JwtResponseDto;
 import com.socialsphere.socialsphere.payload.response.LoginResponseDto;
@@ -21,10 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 
@@ -52,7 +52,7 @@ public class AuthController {
         // Creating JWT token and setting it in cookie
         log.info("Generating JWT token");
         String accessToken = jwtUtil.generateToken(signupDto.getUserName());
-        ResponseCookie cookie = ResponseCookie.from("accessToken", accessToken)
+        ResponseCookie cookie = ResponseCookie.from(CommonConstant.ACCESS_TOKEN, accessToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -85,5 +85,19 @@ public class AuthController {
         sendOtpService.sendOtp(emailId);
         log.info("Sending OTP for email id journey completed from Controller");
         return ResponseEntity.ok().body(new SendOtpResponseDto("Otp sent successfully", true));
+    }
+    // TODO need to under the below endpoint return part how it's working
+    @PostMapping("/refreshToken")
+    public JwtResponseDto refreshToken(@RequestBody RefreshTokenDto refreshTokenRequestDto){
+        return refreshTokenService.findByToken(refreshTokenRequestDto.getToken())
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshTokenEntity::getUserEntity)
+                .map(userEntity -> {
+                    String accessToken = jwtUtil.generateToken(userEntity.getUsername());
+                    return JwtResponseDto.builder()
+                            .accessToken(accessToken)
+                            .token(refreshTokenRequestDto.getToken())
+                            .build();
+                }).orElseThrow(() -> new TokenException("Refresh token not found"));
     }
 }

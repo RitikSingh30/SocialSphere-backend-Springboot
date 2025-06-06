@@ -1,5 +1,6 @@
 package com.socialsphere.socialsphere.security;
 
+import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.services.impl.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,7 +37,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             String jwt = null;
             if(request.getCookies() != null){
                 for(Cookie cookie : request.getCookies()){
-                    if(cookie.getName().equals("accessToken")){
+                    if(cookie.getName().equals(CommonConstant.ACCESS_TOKEN)){
                         jwt = cookie.getValue();
                     }
                 }
