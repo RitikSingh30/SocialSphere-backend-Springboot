@@ -3,6 +3,7 @@ package com.socialsphere.socialsphere.controller;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
 import com.socialsphere.socialsphere.payload.LoginDto;
 import com.socialsphere.socialsphere.payload.SignupDto;
+import com.socialsphere.socialsphere.payload.response.JwtResponseDto;
 import com.socialsphere.socialsphere.payload.response.LoginResponseDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
@@ -52,17 +53,19 @@ public class AuthController {
         log.info("Generating JWT token");
         String accessToken = jwtUtil.generateToken(signupDto.getUserName());
         ResponseCookie cookie = ResponseCookie.from("accessToken", accessToken)
-                        .httpOnly(true)
-                                .secure(true)
-                                        .path("/")
-                                                .sameSite("Strict")
-                                                        .maxAge(cookieExpiry)
-                                                                .build();
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(cookieExpiry)
+                .build();
+
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return JwtResponseDto.builder()
-                        .accessToken(accessToken)
-                                .token(refreshToken.getToken())
-                                        .build();
+        // TODO need to check how this jwtResponseDto should be return
+        JwtResponseDto jwtResponseDto = JwtResponseDto.builder()
+                .accessToken(accessToken)
+                .token(refreshToken.getToken())
+                .build();
 
         log.info("Signup Journey Completed from Controller");
         return new ResponseEntity<>(signupResponseDto, HttpStatus.CREATED);
