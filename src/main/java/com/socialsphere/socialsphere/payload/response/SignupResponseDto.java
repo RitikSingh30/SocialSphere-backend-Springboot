@@ -12,4 +12,5 @@ import lombok.Setter;
 public class SignupResponseDto {
     private String message;
     private Boolean success;
+    private JwtResponseDto jwtResponseDto;
 }

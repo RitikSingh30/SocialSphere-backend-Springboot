@@ -48,7 +48,6 @@ public class AuthController {
         SignupResponseDto signupResponseDto = signupService.signup(signupDto);
 
         RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(signupDto.getUserName());
-
         // Creating JWT token and setting it in cookie
         log.info("Generating JWT token");
         String accessToken = jwtUtil.generateToken(signupDto.getUserName());
@@ -61,12 +60,11 @@ public class AuthController {
                 .build();
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        // TODO need to check how this jwtResponseDto should be return
         JwtResponseDto jwtResponseDto = JwtResponseDto.builder()
                 .accessToken(accessToken)
                 .token(refreshToken.getToken())
                 .build();
-
+        signupResponseDto.setJwtResponseDto(jwtResponseDto);
         log.info("Signup Journey Completed from Controller");
         return new ResponseEntity<>(signupResponseDto, HttpStatus.CREATED);
     }
@@ -86,7 +84,7 @@ public class AuthController {
         log.info("Sending OTP for email id journey completed from Controller");
         return ResponseEntity.ok().body(new SendOtpResponseDto("Otp sent successfully", true));
     }
-    // TODO need to under the below endpoint return part how it's working
+
     @PostMapping("/refreshToken")
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenDto refreshTokenRequestDto){
         return refreshTokenService.findByToken(refreshTokenRequestDto.getToken())
