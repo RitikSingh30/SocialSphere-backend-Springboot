@@ -27,6 +27,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshTokenEntity createRefreshToken(String username) {
+        log.info("Creating new refresh token");
         try{
             UserEntity userEntity = userRepo.findByUsername(username);
             // Delete the refresh token if it's already exits for the current user
@@ -37,6 +38,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
                     .token(UUID.randomUUID().toString())
                     .expiresDate(Instant.now().plusMillis(refreshTokenExpiresIn))
                     .build();
+            log.info("Created new refresh token");
             return refreshTokenRepo.save(refreshTokenEntity);
         } catch(Exception e){
             log.error("Error while creating refresh token", e);

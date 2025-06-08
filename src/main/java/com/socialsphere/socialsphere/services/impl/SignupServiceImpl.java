@@ -28,7 +28,7 @@ public class SignupServiceImpl implements SignupService {
     @Override
     public SignupResponseDto signup(SignupDto signupDto) {
         try{
-            log.info("Entering into SignupService");
+            log.info("Entering into SignupService, signup method");
             log.info("Checking if user exists with username {}", signupDto.getUserName());
             if(userRepo.findByUsername(signupDto.getUserName()) != null) {
                 throw new UserAlreadyExistException("User with the username already exist please proceed to login", HttpStatus.CONFLICT);
@@ -49,14 +49,17 @@ public class SignupServiceImpl implements SignupService {
             log.info("Calling userRepo to save the user signup data into database");
             userRepo.save(userProfileEntity);
 
-            log.info("Exiting from Signup service");
         } catch (UserAlreadyExistException userAlreadyExistException) {
             log.error("User {} already exist", signupDto.getUserName());
             throw userAlreadyExistException;
+        } catch (OtpException otpException) {
+            log.error("Otp verification failed", otpException);
+            throw otpException;
         } catch (Exception e) {
             log.error("Error occur while signing up", e);
             throw e;
         }
+        log.info("Exiting from Signup service, signup method");
         return SignupResponseDto.builder()
                 .message("Signup successful")
                 .success(true)

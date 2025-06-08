@@ -47,7 +47,8 @@ public class AuthController {
     public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupDto signupDto, HttpServletResponse response) {
         log.info("Signup Journey Started from Controller");
         SignupResponseDto signupResponseDto = signupService.signup(signupDto);
-        JwtResponseDto jwtResponseDto = getJwtResponseDto(signupDto.getUserName(), response);
+        // Creating the jwt token, cookies and refreshToken
+        JwtResponseDto jwtResponseDto = getJwtResponseDto(signupDto.getUserName().toLowerCase(), response);
         signupResponseDto.setJwtResponseDto(jwtResponseDto);
         log.info("Signup Journey Completed from Controller");
         return new ResponseEntity<>(signupResponseDto, HttpStatus.CREATED);
@@ -58,10 +59,10 @@ public class AuthController {
         log.info("Login Journey Started from Controller");
         // Authenticating the user manually.
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName(),loginDto.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName().toLowerCase(),loginDto.getPassword()));
         // Checking if the user is authenticated or not
         if(authentication.isAuthenticated()){
-            JwtResponseDto jwtResponseDto = getJwtResponseDto(loginDto.getUserName(), response);
+            JwtResponseDto jwtResponseDto = getJwtResponseDto(loginDto.getUserName().toLowerCase(), response);
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                     .message("Login successful..!!")
                     .success(true)
@@ -84,35 +85,49 @@ public class AuthController {
 
     @PostMapping("/refreshToken")
     public JwtResponseDto refreshToken(@RequestBody RefreshTokenDto refreshTokenRequestDto){
-        return refreshTokenService.findByToken(refreshTokenRequestDto.getToken())
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshTokenEntity::getUserEntity)
-                .map(userEntity -> {
-                    String accessToken = jwtUtil.generateToken(userEntity.getUsername());
-                    return JwtResponseDto.builder()
-                            .accessToken(accessToken)
-                            .token(refreshTokenRequestDto.getToken())
-                            .build();
-                }).orElseThrow(() -> new TokenException("Refresh token not found"));
+        log.info("Refreshing the refresh token in refreshToken endpoint");
+        try{
+            return refreshTokenService.findByToken(refreshTokenRequestDto.getToken())
+                    .map(refreshTokenService::verifyExpiration)
+                    .map(RefreshTokenEntity::getUserEntity)
+                    .map(userEntity -> {
+                        String accessToken = jwtUtil.generateToken(userEntity.getUsername());
+                        return JwtResponseDto.builder()
+                                .accessToken(accessToken)
+                                .token(refreshTokenRequestDto.getToken())
+                                .build();
+                    }).orElseThrow(() -> new TokenException("Refresh token not found"));
+        } catch (Exception e){
+            log.error("Error occurred while refreshing token", e);
+            throw e ;
+        }
     }
 
     private JwtResponseDto getJwtResponseDto(String userName, HttpServletResponse response){
-        RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(userName);
-        // Creating JWT token and setting it in cookie
-        log.info("Generating JWT token");
-        String accessToken = jwtUtil.generateToken(userName);
-        ResponseCookie cookie = ResponseCookie.from(CommonConstant.ACCESS_TOKEN, accessToken)
-                .httpOnly(true)
-                .secure(true) // Todo need to check whether this works on http or not
-                .path("/")
-                .sameSite("Strict")
-                .maxAge(cookieExpiry)
-                .build();
-
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        return JwtResponseDto.builder()
-                .accessToken(accessToken)
-                .token(refreshToken.getToken())
-                .build();
+        try{
+            log.info("Entering getJwtResponseDto to generate JwtToken, Cookie and Refresh Token.");
+            // Creating refresh token
+            RefreshTokenEntity refreshToken = refreshTokenService.createRefreshToken(userName);
+            // Creating JWT token and setting it in cookie
+            String accessToken = jwtUtil.generateToken(userName);
+            // Setting JWT token in the cookie
+            ResponseCookie cookie = ResponseCookie.from(CommonConstant.ACCESS_TOKEN, accessToken)
+                    .httpOnly(true)
+                    .secure(true) // Todo need to check whether this works on http or not
+                    .path("/")
+                    .sameSite("Strict")
+                    .maxAge(cookieExpiry)
+                    .build();
+            // Adding cookie into the header
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            log.info("Exiting getJwtResponseDto token created.");
+            return JwtResponseDto.builder()
+                    .accessToken(accessToken)
+                    .token(refreshToken.getToken())
+                    .build();
+        } catch (Exception e){
+            log.error("Error occurred in getJwtResponseDto method in controller", e);
+            throw e;
+        }
     }
 }

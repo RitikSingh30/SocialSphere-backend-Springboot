@@ -1,8 +1,8 @@
 package com.socialsphere.socialsphere.exception;
 
-import com.socialsphere.socialsphere.payload.response.ApiExceptionDto;
+import com.socialsphere.socialsphere.payload.response.exception.ApiExceptionDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
-import com.socialsphere.socialsphere.payload.response.UnauthorizedResponseDto;
+import com.socialsphere.socialsphere.payload.response.exception.UnauthorizedResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

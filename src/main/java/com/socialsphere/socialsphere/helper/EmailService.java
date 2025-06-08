@@ -22,7 +22,7 @@ public class EmailService {
     private String senderMailId;
 
     private final SpringTemplateEngine templateEngine;
-    // todo Need to implement try and catch
+
     public void sendEmail(String to, String subject, Context context) throws MessagingException {
         log.info("Sending email OTP journey started");
         context.setVariable("subject",subject);

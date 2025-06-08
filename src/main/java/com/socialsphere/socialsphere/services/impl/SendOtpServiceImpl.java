@@ -27,7 +27,7 @@ public class SendOtpServiceImpl implements SendOtpService {
 
     @Override
     public void sendOtp(String email) {
-        log.info("Entering into sendOtp service");
+        log.info("Entering into SendOtpServiceImpl service sendOtp method");
         try{
             String otp = generateOtp();
             saveOtpToDatabase(email,otp);
@@ -37,22 +37,27 @@ public class SendOtpServiceImpl implements SendOtpService {
         } catch(MailException | MessagingException | MongoException exception){
             log.error("Error occurred while sending otp", exception);
             throw new OtpException("Otp Send failed", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e){
+            log.error("Error occurred while sending otp", e);
+            throw e ;
         }
-        log.info("Exiting from sendOtp service");
+        log.info("Exiting from SendOtpServiceImpl service sendOtp service");
     }
 
     private String generateOtp() {
+        log.info("Entering into SendOtpServiceImpl service generateOtp method");
         final SecureRandom secureRandom = new SecureRandom();
         int otp = 100000 + secureRandom.nextInt(900000);
+        log.info("exiting from SendOtpServiceImpl service generateOtp method, Generated otp: {}", otp);
         return String.valueOf(otp);
     }
 
     private void saveOtpToDatabase(String email, String otp) {
-        log.info("Saving OTP in database");
+        log.info("Into SendOtpServiceImpl service saveOtpToDatabase method, Initiating Saving OTP in database call");
         OtpEntity otpEntity = new OtpEntity();
         otpEntity.setEmail(email);
         otpEntity.setCode(otp);
         otpRepo.save(otpEntity);
-        log.info("Saved OTP in database");
+        log.info("Exiting from SendOtpServiceImpl service saveOtpDatabase method, OTP is successfully saved into database");
     }
 }

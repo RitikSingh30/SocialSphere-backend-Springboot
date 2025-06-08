@@ -1,4 +1,4 @@
-package com.socialsphere.socialsphere.payload.response;
+package com.socialsphere.socialsphere.payload.response.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
