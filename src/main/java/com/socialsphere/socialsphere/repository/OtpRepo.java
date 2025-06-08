@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface OtpRepo extends MongoRepository<OtpEntity, ObjectId> {
-    public Optional<OtpEntity> findTopByEmailOrderByCreatedAtDesc(String email);
+    Optional<OtpEntity> findTopByEmailOrderByCreatedAtDesc(String email);
 }
