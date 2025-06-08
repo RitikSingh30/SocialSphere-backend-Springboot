@@ -2,11 +2,12 @@ package com.socialsphere.socialsphere.payload;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class SignupDto {
     @NotBlank(message = "Email should be present")
     @Email(message = "Email should be valid")
