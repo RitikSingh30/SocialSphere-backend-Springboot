@@ -1,5 +1,6 @@
 package com.socialsphere.socialsphere.security;
 
+import com.socialsphere.socialsphere.exception.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -15,7 +16,7 @@ import java.util.Date;
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String jwtSecret;
-    @Value("${refreshTokenExpiry}")
+    @Value("${jwt.expiry}")
     private long jwtExpirationMs;
     private SecretKey key;
     // Initializes the key after the class is instantiated and the jwtSecret is injected,
@@ -58,7 +59,7 @@ public class JwtUtil {
             log.error("JWT claims string is empty: {}", e.getMessage(), e);
         }
 
-        throw new JwtException("Access denied, Unauthorized");
+        throw new TokenException("Access denied, Unauthorized");
     }
 
 }

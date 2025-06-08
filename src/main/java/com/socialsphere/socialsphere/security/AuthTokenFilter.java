@@ -1,6 +1,7 @@
 package com.socialsphere.socialsphere.security;
 
 import com.socialsphere.socialsphere.constant.CommonConstant;
+import com.socialsphere.socialsphere.exception.TokenException;
 import com.socialsphere.socialsphere.services.impl.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.*;
@@ -56,8 +56,12 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (TokenException tokenException){
+            log.error("Exception while validating token", tokenException);
+            throw tokenException;
         } catch (Exception e) {
             log.error("Cannot set user authentication: ",e);
+            throw e;
         }
         filterChain.doFilter(request, response);
     }

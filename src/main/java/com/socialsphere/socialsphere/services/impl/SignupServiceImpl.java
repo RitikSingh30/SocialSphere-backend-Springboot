@@ -3,6 +3,7 @@ package com.socialsphere.socialsphere.services.impl;
 import com.socialsphere.socialsphere.entity.OtpEntity;
 import com.socialsphere.socialsphere.entity.UserEntity;
 import com.socialsphere.socialsphere.exception.OtpException;
+import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
 import com.socialsphere.socialsphere.mapper.SignupEntityMapper;
 import com.socialsphere.socialsphere.payload.SignupDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
@@ -26,29 +27,40 @@ public class SignupServiceImpl implements SignupService {
 
     @Override
     public SignupResponseDto signup(SignupDto signupDto) {
-        log.info("Entering into SignupService");
-        log.info("Calling otpRepo to fetch the latest otp");
-        // fetch the latest otp of the user from the database
-        OtpEntity otpEntity = otpRepo.findTopByEmailOrderByCreatedAtDesc(signupDto.getEmail())
-                .orElseThrow(() -> new OtpException("Otp verification fail, please try again", HttpStatus.INTERNAL_SERVER_ERROR));
+        try{
+            log.info("Entering into SignupService");
+            log.info("Checking if user exists with username {}", signupDto.getUserName());
+            if(userRepo.findByUsername(signupDto.getUserName()) != null) {
+                throw new UserAlreadyExistException("User with the username already exist please proceed to login", HttpStatus.CONFLICT);
+            }
+            log.info("Calling otpRepo to fetch the latest otp");
+            // fetch the latest otp of the user from the database
+            OtpEntity otpEntity = otpRepo.findTopByEmailOrderByCreatedAtDesc(signupDto.getEmail())
+                    .orElseThrow(() -> new OtpException("Otp verification fail, please try again", HttpStatus.INTERNAL_SERVER_ERROR));
 
-        // comparing the otp
-        if(!otpEntity.getCode().equals(signupDto.getOtp())){
-            throw new OtpException("Invalid OTP, Please enter a valid OTP", HttpStatus.BAD_REQUEST);
+            // comparing the otp
+            if(!otpEntity.getCode().equals(signupDto.getOtp())){
+                throw new OtpException("Invalid OTP, Please enter a valid OTP", HttpStatus.BAD_REQUEST);
+            }
+
+            // encrypt the password and save into database
+            String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
+            UserEntity userProfileEntity = signupEntityMapper.setUserProfileEntity(signupDto, encodedPassword);
+            log.info("Calling userRepo to save the user signup data into database");
+            userRepo.save(userProfileEntity);
+
+            log.info("Exiting from Signup service");
+        } catch (UserAlreadyExistException userAlreadyExistException) {
+            log.error("User {} already exist", signupDto.getUserName());
+            throw userAlreadyExistException;
+        } catch (Exception e) {
+            log.error("Error occur while signing up", e);
+            throw e;
         }
-
-        // encrypt the password and save into database
-        String encodedPassword = passwordEncoder.encode(signupDto.getPassword());
-        UserEntity userProfileEntity = signupEntityMapper.setUserProfileEntity(signupDto, encodedPassword);
-        log.info("Calling userRepo to save the user signup data into database");
-        userRepo.save(userProfileEntity);
-
-        // Return signupResponseDto
-        SignupResponseDto signupResponseDto = new SignupResponseDto();
-        signupResponseDto.setMessage("Signup successful");
-        signupResponseDto.setSuccess(true);
-        log.info("Exiting from Signup service");
-        return signupResponseDto;
+        return SignupResponseDto.builder()
+                .message("Signup successful")
+                .success(true)
+                .build();
     }
 
 }

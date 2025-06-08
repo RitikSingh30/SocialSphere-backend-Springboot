@@ -1,9 +1,11 @@
 package com.socialsphere.socialsphere.exception;
 
+import com.socialsphere.socialsphere.payload.response.ApiExceptionDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
 import com.socialsphere.socialsphere.payload.response.UnauthorizedResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,6 +48,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TokenException.class)
     public ResponseEntity<UnauthorizedResponseDto> handleTokenException(TokenException tokenException){
         return new ResponseEntity<>(new UnauthorizedResponseDto(tokenException.getMessage(),false), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    public ResponseEntity<UnauthorizedResponseDto> handleUserAlreadyExistException(UserAlreadyExistException userAlreadyExistException){
+        return new ResponseEntity<>(new UnauthorizedResponseDto(userAlreadyExistException.getMessage(),false), userAlreadyExistException.getStatusCode());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<UnauthorizedResponseDto> handleBadCredentialsException(BadCredentialsException badCredentialsException){
+        return new ResponseEntity<>(new UnauthorizedResponseDto("Username or password is incorrect",false), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiExceptionDto> handleUncheckedException(Exception e){
+        return new ResponseEntity<>(new ApiExceptionDto("Something went wrong"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
