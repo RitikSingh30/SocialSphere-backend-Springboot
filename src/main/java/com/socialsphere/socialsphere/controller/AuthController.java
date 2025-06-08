@@ -11,6 +11,7 @@ import com.socialsphere.socialsphere.payload.response.LoginResponseDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
 import com.socialsphere.socialsphere.security.JwtUtil;
+import com.socialsphere.socialsphere.services.ForgotPasswordService;
 import com.socialsphere.socialsphere.services.RefreshTokenService;
 import com.socialsphere.socialsphere.services.SendOtpService;
 import com.socialsphere.socialsphere.services.SignupService;
@@ -39,6 +40,7 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
+    private final ForgotPasswordService forgotPasswordService;
 
     @Value("${jwt.cookieExpiry}")
     private int cookieExpiry;
@@ -73,6 +75,14 @@ public class AuthController {
         } else {
             throw new UsernameNotFoundException("Invalid user request..!!");
         }
+    }
+
+    @PostMapping("/forgotPassword/{emailId}")
+    public ResponseEntity<SendOtpResponseDto> forgetPassword(@PathVariable String emailId){
+        log.info("Forgot Password Journey Started from Controller");
+        forgotPasswordService.forgotPassword(emailId);
+        log.info("Forgot Password Journey Started from Controller");
+        return ResponseEntity.ok(new SendOtpResponseDto("Otp sent successfully", true));
     }
 
     @PostMapping("/sendOtp/{emailId}")

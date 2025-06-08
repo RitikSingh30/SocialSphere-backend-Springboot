@@ -27,7 +27,7 @@ public class SendOtpServiceImpl implements SendOtpService {
 
     @Override
     public void sendOtp(String email) {
-        log.info("Entering into SendOtpServiceImpl service sendOtp method");
+        log.info("Entering into SendOtpServiceImpl service, sendOtp method");
         try{
             String otp = generateOtp();
             saveOtpToDatabase(email,otp);
@@ -41,14 +41,14 @@ public class SendOtpServiceImpl implements SendOtpService {
             log.error("Error occurred while sending otp", e);
             throw e ;
         }
-        log.info("Exiting from SendOtpServiceImpl service sendOtp service");
+        log.info("Exiting from SendOtpServiceImpl service, sendOtp service");
     }
 
     private String generateOtp() {
-        log.info("Entering into SendOtpServiceImpl service generateOtp method");
+        log.info("Entering into SendOtpServiceImpl service, generateOtp method");
         final SecureRandom secureRandom = new SecureRandom();
         int otp = 100000 + secureRandom.nextInt(900000);
-        log.info("exiting from SendOtpServiceImpl service generateOtp method, Generated otp: {}", otp);
+        log.info("exiting from SendOtpServiceImpl service, generateOtp method, Generated otp: {}", otp);
         return String.valueOf(otp);
     }
 
