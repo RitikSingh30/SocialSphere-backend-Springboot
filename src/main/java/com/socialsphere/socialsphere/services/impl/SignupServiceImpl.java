@@ -30,7 +30,7 @@ public class SignupServiceImpl implements SignupService {
     public SignupResponseDto signup(SignupDto signupDto) {
         try{
             log.info("Entering into SignupService, signup method");
-            log.info("Checking if user exists with username {}", signupDto.getUserName());
+            log.info("Checking if user exists with username {} or email {}", signupDto.getUserName(), signupDto.getEmail());
             if(userRepo.findByUsername(signupDto.getUserName().toLowerCase()) != null || userRepo.findByEmail(signupDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
             }

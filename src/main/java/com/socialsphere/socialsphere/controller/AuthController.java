@@ -4,16 +4,10 @@ import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
 import com.socialsphere.socialsphere.exception.TokenException;
 import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
-import com.socialsphere.socialsphere.payload.LoginDto;
-import com.socialsphere.socialsphere.payload.RefreshTokenDto;
-import com.socialsphere.socialsphere.payload.SignupDto;
-import com.socialsphere.socialsphere.payload.VerifyOtpDto;
+import com.socialsphere.socialsphere.payload.*;
 import com.socialsphere.socialsphere.payload.response.*;
 import com.socialsphere.socialsphere.security.JwtUtil;
-import com.socialsphere.socialsphere.services.ForgotPasswordService;
-import com.socialsphere.socialsphere.services.RefreshTokenService;
-import com.socialsphere.socialsphere.services.SendOtpService;
-import com.socialsphere.socialsphere.services.SignupService;
+import com.socialsphere.socialsphere.services.*;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,14 +35,17 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final ForgotPasswordService forgotPasswordService;
     private final ValidateOtpHelper validateOtpHelper;
+    private final SignupVerificationService signupVerificationService;
 
     @Value("${jwt.cookieExpiry}")
     private int cookieExpiry;
 
     @PostMapping("/signupVerification")
-    public ResponseEntity<?> signupVerification(@RequestBody SignupVerificationDto signupVerificationDto) {
+    public ResponseEntity<SendOtpResponseDto> signupVerification(@RequestBody SignupVerificationDto signupVerificationDto) {
         log.info("Signup verification journey Started from Controller");
-
+        signupVerificationService.signupVerification(signupVerificationDto);
+        log.info("Signup verification journey Completed from Controller");
+        return ResponseEntity.ok(new SendOtpResponseDto("Otp send successful",true));
     }
 
     @PostMapping("/signup")
@@ -88,7 +85,7 @@ public class AuthController {
         log.info("Forgot Password Journey Started from Controller");
         forgotPasswordService.forgotPassword(emailId);
         log.info("Forgot Password Journey Started from Controller");
-        return ResponseEntity.ok(new SendOtpResponseDto("Otp sent successfully", true));
+        return new ResponseEntity<>(new SendOtpResponseDto("Otp sent successfully", true), HttpStatus.CREATED);
     }
 
     @PostMapping("/sendOtp/{emailId}")
