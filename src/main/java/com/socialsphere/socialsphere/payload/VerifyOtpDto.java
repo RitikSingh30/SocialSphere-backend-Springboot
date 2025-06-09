@@ -1,0 +1,14 @@
+package com.socialsphere.socialsphere.payload;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+
+@Data
+public class VerifyOtpDto {
+    @NotBlank(message = "Email should be present")
+    @Email(message = "Email should be valid")
+    private String email;
+    @NotBlank(message = "Otp should be present")
+    private String otp;
+}

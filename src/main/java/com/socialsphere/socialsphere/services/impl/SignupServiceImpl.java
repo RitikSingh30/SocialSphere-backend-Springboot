@@ -4,6 +4,7 @@ import com.socialsphere.socialsphere.entity.OtpEntity;
 import com.socialsphere.socialsphere.entity.UserEntity;
 import com.socialsphere.socialsphere.exception.OtpException;
 import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
+import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
 import com.socialsphere.socialsphere.mapper.SignupEntityMapper;
 import com.socialsphere.socialsphere.payload.SignupDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
@@ -20,10 +21,10 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class SignupServiceImpl implements SignupService {
-    private final OtpRepo otpRepo;
     private final PasswordEncoder passwordEncoder;
     private final SignupEntityMapper signupEntityMapper;
     private final UserRepo userRepo;
+    private final ValidateOtpHelper validateOtpHelper;
 
     @Override
     public SignupResponseDto signup(SignupDto signupDto) {
@@ -33,15 +34,7 @@ public class SignupServiceImpl implements SignupService {
             if(userRepo.findByUsername(signupDto.getUserName().toLowerCase()) != null || userRepo.findByEmail(signupDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
             }
-            log.info("Calling otpRepo to fetch the latest otp");
-            // fetch the latest otp of the user from the database
-            OtpEntity otpEntity = otpRepo.findTopByEmailOrderByCreatedAtDesc(signupDto.getEmail())
-                    .orElseThrow(() -> new OtpException("Otp verification fail, please try again", HttpStatus.INTERNAL_SERVER_ERROR));
-
-            // comparing the otp
-            if(!otpEntity.getCode().equals(signupDto.getOtp())){
-                throw new OtpException("Invalid OTP, Please enter a valid OTP", HttpStatus.BAD_REQUEST);
-            }
+            validateOtpHelper.isOtpValid(signupDto.getOtp(),signupDto.getEmail());
 
             // encrypt the password and save into database
             String encodedPassword = passwordEncoder.encode(signupDto.getPassword());

@@ -3,13 +3,12 @@ package com.socialsphere.socialsphere.controller;
 import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
 import com.socialsphere.socialsphere.exception.TokenException;
+import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
 import com.socialsphere.socialsphere.payload.LoginDto;
 import com.socialsphere.socialsphere.payload.RefreshTokenDto;
 import com.socialsphere.socialsphere.payload.SignupDto;
-import com.socialsphere.socialsphere.payload.response.JwtResponseDto;
-import com.socialsphere.socialsphere.payload.response.LoginResponseDto;
-import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
-import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
+import com.socialsphere.socialsphere.payload.VerifyOtpDto;
+import com.socialsphere.socialsphere.payload.response.*;
 import com.socialsphere.socialsphere.security.JwtUtil;
 import com.socialsphere.socialsphere.services.ForgotPasswordService;
 import com.socialsphere.socialsphere.services.RefreshTokenService;
@@ -41,9 +40,16 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
     private final ForgotPasswordService forgotPasswordService;
+    private final ValidateOtpHelper validateOtpHelper;
 
     @Value("${jwt.cookieExpiry}")
     private int cookieExpiry;
+
+    @PostMapping("/signupVerification")
+    public ResponseEntity<?> signupVerification(@RequestBody SignupVerificationDto signupVerificationDto) {
+        log.info("Signup verification journey Started from Controller");
+
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupDto signupDto, HttpServletResponse response) {
@@ -91,6 +97,14 @@ public class AuthController {
         sendOtpService.sendOtp(emailId);
         log.info("Sending OTP for email id journey completed from Controller");
         return ResponseEntity.ok().body(new SendOtpResponseDto("Otp sent successfully", true));
+    }
+
+    @PostMapping("/verifyOtp")
+    public ResponseEntity<VerifyOtpResponseDto> verifyOtp(@RequestBody @Valid VerifyOtpDto verifyOtpDto){
+        log.info("Verifying OTP for email id journey started from Controller");
+        validateOtpHelper.isOtpValid(verifyOtpDto.getOtp(), verifyOtpDto.getEmail());
+        log.info("Verifying OTP for email id journey completed from Controller");
+        return ResponseEntity.ok(new VerifyOtpResponseDto("Otp verified successfully", true));
     }
 
     @PostMapping("/refreshToken")

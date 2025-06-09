@@ -4,7 +4,7 @@ import com.mongodb.MongoException;
 import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.OtpEntity;
 import com.socialsphere.socialsphere.exception.OtpException;
-import com.socialsphere.socialsphere.helper.EmailService;
+import com.socialsphere.socialsphere.helper.EmailServiceHelper;
 import com.socialsphere.socialsphere.repository.OtpRepo;
 import com.socialsphere.socialsphere.services.SendOtpService;
 import jakarta.mail.MessagingException;
@@ -23,7 +23,7 @@ public class SendOtpServiceImpl implements SendOtpService {
 
     private final OtpRepo otpRepo;
 
-    private final EmailService emailService;
+    private final EmailServiceHelper emailService;
 
     @Override
     public void sendOtp(String email) {
