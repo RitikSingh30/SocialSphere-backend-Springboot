@@ -1,6 +1,5 @@
 package com.socialsphere.socialsphere.services.impl;
 
-import com.socialsphere.socialsphere.entity.OtpEntity;
 import com.socialsphere.socialsphere.entity.UserEntity;
 import com.socialsphere.socialsphere.exception.OtpException;
 import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
@@ -8,7 +7,6 @@ import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
 import com.socialsphere.socialsphere.mapper.SignupEntityMapper;
 import com.socialsphere.socialsphere.payload.SignupDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
-import com.socialsphere.socialsphere.repository.OtpRepo;
 import com.socialsphere.socialsphere.repository.UserRepo;
 import com.socialsphere.socialsphere.services.SignupService;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +52,9 @@ public class SignupServiceImpl implements SignupService {
         }
         log.info("Exiting from Signup service, signup method");
         return SignupResponseDto.builder()
-                .message("Signup successful")
-                .success(true)
+                .username(signupDto.getUserName())
+                .email(signupDto.getEmail())
+                .fullName(signupDto.getFullName())
                 .build();
     }
 

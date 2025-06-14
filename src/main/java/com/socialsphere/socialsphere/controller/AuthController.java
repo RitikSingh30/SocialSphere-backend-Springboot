@@ -8,6 +8,7 @@ import com.socialsphere.socialsphere.payload.*;
 import com.socialsphere.socialsphere.payload.response.*;
 import com.socialsphere.socialsphere.security.JwtUtil;
 import com.socialsphere.socialsphere.services.*;
+import com.socialsphere.socialsphere.utility.ResponseUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,22 +45,25 @@ public class AuthController {
     private int cookieExpiry;
 
     @PostMapping("/signupVerification")
-    public ResponseEntity<SendOtpResponseDto> signupVerification(@RequestBody SignupVerificationDto signupVerificationDto) {
+    public ResponseEntity<ApiResponse<Map<String,Object>>> signupVerification(@RequestBody SignupVerificationDto signupVerificationDto) {
         log.info("Signup verification journey Started from Controller");
-        signupVerificationService.signupVerification(signupVerificationDto);
+        Map<String,Object> data = signupVerificationService.signupVerification(signupVerificationDto);
+        Map<String,Object> metadata = Map.of("timestamp", Instant.now().toString());
+        ApiResponse<Map<String,Object>> apiResponse = ResponseUtil.success("Otp send successful",data,metadata);
         log.info("Signup verification journey Completed from Controller");
-        return ResponseEntity.ok(new SendOtpResponseDto("Otp send successful",true));
+        return ResponseEntity.ok(apiResponse);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupDto signupDto, HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<SignupResponseDto>> signup(@Valid @RequestBody SignupDto signupDto, HttpServletResponse response) {
         log.info("Signup Journey Started from Controller");
         SignupResponseDto signupResponseDto = signupService.signup(signupDto);
         // Creating the jwt token, cookies and refreshToken
         JwtResponseDto jwtResponseDto = getJwtResponseDto(signupDto.getUserName().toLowerCase(), response);
         signupResponseDto.setJwtResponseDto(jwtResponseDto);
+        ApiResponse<SignupResponseDto> apiResponse = ResponseUtil.success("Signup successful",signupResponseDto,null);
         log.info("Signup Journey Completed from Controller");
-        return new ResponseEntity<>(signupResponseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

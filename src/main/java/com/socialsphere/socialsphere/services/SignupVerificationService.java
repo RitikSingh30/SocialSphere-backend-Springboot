@@ -2,6 +2,8 @@ package com.socialsphere.socialsphere.services;
 
 import com.socialsphere.socialsphere.payload.SignupVerificationDto;
 
+import java.util.Map;
+
 public interface SignupVerificationService {
-    void signupVerification(SignupVerificationDto signupVerificationDto);
+    Map<String, Object> signupVerification(SignupVerificationDto signupVerificationDto);
 }

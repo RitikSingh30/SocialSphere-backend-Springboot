@@ -3,6 +3,7 @@ package com.socialsphere.socialsphere.exception;
 import com.socialsphere.socialsphere.payload.response.exception.ApiExceptionDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
 import com.socialsphere.socialsphere.payload.response.exception.UnauthorizedResponseDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -62,6 +64,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiExceptionDto> handleUncheckedException(Exception e){
+        log.error("Unhandled exception", e);
         return new ResponseEntity<>(new ApiExceptionDto("Something went wrong"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

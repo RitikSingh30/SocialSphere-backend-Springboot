@@ -26,10 +26,11 @@ public class SendOtpServiceImpl implements SendOtpService {
     private final EmailServiceHelper emailService;
 
     @Override
-    public void sendOtp(String email) {
+    public String sendOtp(String email) {
         log.info("Entering into SendOtpServiceImpl service, sendOtp method");
+        String otp = null;
         try{
-            String otp = generateOtp();
+            otp = generateOtp();
             saveOtpToDatabase(email,otp);
             Context context = new Context();
             context.setVariable(CommonConstant.OTP,otp);
@@ -42,6 +43,7 @@ public class SendOtpServiceImpl implements SendOtpService {
             throw e ;
         }
         log.info("Exiting from SendOtpServiceImpl service, sendOtp service");
+        return otp;
     }
 
     private String generateOtp() {

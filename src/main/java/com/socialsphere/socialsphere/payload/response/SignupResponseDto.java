@@ -8,7 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class SignupResponseDto {
-    private String message;
-    private Boolean success;
+    private String username;
+    private String email;
+    private String fullName;
     private JwtResponseDto jwtResponseDto;
 }

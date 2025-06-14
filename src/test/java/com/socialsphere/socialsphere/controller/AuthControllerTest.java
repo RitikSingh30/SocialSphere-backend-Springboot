@@ -3,6 +3,7 @@ package com.socialsphere.socialsphere.controller;
 import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
 import com.socialsphere.socialsphere.payload.SignupDto;
+import com.socialsphere.socialsphere.payload.response.ApiResponse;
 import com.socialsphere.socialsphere.payload.response.JwtResponseDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
@@ -51,11 +52,12 @@ class AuthControllerTest {
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(getRefreshTokenEntity());
         when(jwtUtil.generateToken(anyString())).thenReturn(CommonConstant.ACCESS_TOKEN);
         // Act and verify
-        ResponseEntity<SignupResponseDto> signupResponse = authController.signup(signupDto, httpServletResponse);
-        assertNotNull(signupResponse);
-        assertEquals(HttpStatus.CREATED, signupResponse.getStatusCode());
-        assertNotNull(signupResponse.getBody());
-        assertEquals(getJwtResponseDto(),signupResponse.getBody().getJwtResponseDto());
+        ResponseEntity<ApiResponse<SignupResponseDto>> apiResponse = authController.signup(signupDto, httpServletResponse);
+        assertNotNull(apiResponse);
+        assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
+        assertNotNull(apiResponse.getBody());
+        assertNotNull(apiResponse.getBody().getData());
+        assertEquals(getJwtResponseDto(),apiResponse.getBody().getData().getJwtResponseDto());
         verify(httpServletResponse).addHeader(eq(HttpHeaders.SET_COOKIE),anyString());
     }
 
