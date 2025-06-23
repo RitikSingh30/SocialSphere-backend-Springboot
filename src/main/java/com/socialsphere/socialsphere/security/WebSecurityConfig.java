@@ -30,8 +30,8 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/sendOtp/**","/signup", "/login",
-                                        "/forgotPassword/**","/signupVerification").permitAll()
+                                .requestMatchers("/auth/sendOtp/**","/auth/signup", "/auth/login",
+                                        "/auth/forgotPassword/**","/auth/signupVerification").permitAll()
                                 .anyRequest().authenticated()
                 )
                 // Add the JWT Token filter before the UsernamePasswordAuthenticationFilter

@@ -1,5 +1,7 @@
 package com.socialsphere.socialsphere.services;
 
+import java.util.Map;
+
 public interface ForgotPasswordService {
-    void forgotPassword(String emailId);
+    Map<String, Object> forgotPassword(String emailId);
 }

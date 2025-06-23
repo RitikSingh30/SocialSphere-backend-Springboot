@@ -8,13 +8,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class ValidateOtpHelper {
     private final OtpRepo otpRepo;
 
-    public void isOtpValid(String otp, String emailId) {
+    public Map<String,Object> isOtpValid(String otp, String emailId) {
         try{
             log.info("Validating OTP for user {}", emailId);
             log.info("Calling otpRepo to fetch the latest otp");
@@ -33,5 +35,8 @@ public class ValidateOtpHelper {
         } catch (Exception e){
             log.error("Error occurred while validating OTP for user {}", emailId, e);
         }
+        return Map.of(
+                "otp",otp,
+                "email",emailId);
     }
 }

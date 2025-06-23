@@ -1,5 +1,6 @@
 package com.socialsphere.socialsphere.exception;
 
+import com.socialsphere.socialsphere.payload.response.ApiResponse;
 import com.socialsphere.socialsphere.payload.response.exception.ApiExceptionDto;
 import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
 import com.socialsphere.socialsphere.payload.response.exception.UnauthorizedResponseDto;
@@ -10,18 +11,22 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-@ControllerAdvice
+import static com.socialsphere.socialsphere.utility.CommonUtil.getErrorApiResponse;
+
+@RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String,String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException){
+    public ResponseEntity<ApiResponse<Map<String,String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException){
+        log.error("Error occurred while validating request", methodArgumentNotValidException);
         Map<String,String> errors = new HashMap<>();
         methodArgumentNotValidException.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName;
@@ -34,12 +39,16 @@ public class GlobalExceptionHandler {
             errors.put(fieldName, message);
         });
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(getErrorApiResponse("Field validation error",errors), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(OtpException.class)
-    public ResponseEntity<SendOtpResponseDto> handleMongoDBException(OtpException otpException){
-        return new ResponseEntity<>(new SendOtpResponseDto(otpException.getMessage(),false), otpException.getStatusCode());
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleOtpException(OtpException otpException){
+        log.error("OTP exception error occurred", otpException);
+        Map<String,Object> errors = new HashMap<>();
+        errors.put("Title","OTP Error");
+        errors.put("Timestamp", LocalDateTime.now().toString());
+        return new ResponseEntity<>(getErrorApiResponse(otpException.getMessage(),errors), otpException.getStatusCode());
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)

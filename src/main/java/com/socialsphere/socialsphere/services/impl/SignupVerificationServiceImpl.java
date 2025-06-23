@@ -5,12 +5,12 @@ import com.socialsphere.socialsphere.payload.SignupVerificationDto;
 import com.socialsphere.socialsphere.repository.UserRepo;
 import com.socialsphere.socialsphere.services.SendOtpService;
 import com.socialsphere.socialsphere.services.SignupVerificationService;
+import com.socialsphere.socialsphere.utility.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -37,16 +37,8 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
             throw e;
         }
         log.info("Exiting from SignupVerificationService, signupVerification method");
-        return prepareDataResponse(otp,signupVerificationDto.getEmail());
+        return CommonUtil.prepareOtpDataResponse(otp,signupVerificationDto.getEmail());
     }
 
-    private Map<String,Object> prepareDataResponse(String otp, String email){
-        log.info("preparing data response for successful signup verification");
-        Map<String,Object> data = new HashMap<>();
-        data.put("otp",otp);
-        data.put("expireIn","300ms");
-        data.put("deliveryMethod","email");
-        data.put("deliveredTo",email);
-        return data;
-    }
+
 }
