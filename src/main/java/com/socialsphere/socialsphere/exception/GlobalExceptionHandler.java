@@ -1,9 +1,6 @@
 package com.socialsphere.socialsphere.exception;
 
 import com.socialsphere.socialsphere.payload.response.ApiResponse;
-import com.socialsphere.socialsphere.payload.response.exception.ApiExceptionDto;
-import com.socialsphere.socialsphere.payload.response.SendOtpResponseDto;
-import com.socialsphere.socialsphere.payload.response.exception.UnauthorizedResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,36 +42,44 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(OtpException.class)
     public ResponseEntity<ApiResponse<Map<String,Object>>> handleOtpException(OtpException otpException){
         log.error("OTP exception error occurred", otpException);
-        Map<String,Object> errors = new HashMap<>();
-        errors.put("Title","OTP Error");
-        errors.put("Timestamp", LocalDateTime.now().toString());
-        return new ResponseEntity<>(getErrorApiResponse(otpException.getMessage(),errors), otpException.getStatusCode());
+        return new ResponseEntity<>(getErrorApiResponse(otpException.getMessage(),getErrors("OTP Error")), otpException.getStatusCode());
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<UnauthorizedResponseDto> handleUsernameNotFoundException(UsernameNotFoundException usernameNotFoundException){
-        return new ResponseEntity<>(new UnauthorizedResponseDto(usernameNotFoundException.getMessage(),false), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleUsernameNotFoundException(UsernameNotFoundException usernameNotFoundException){
+        log.error("UsernameNotFoundException error occurred", usernameNotFoundException);
+        return new ResponseEntity<>(getErrorApiResponse(usernameNotFoundException.getMessage(),getErrors("Username not found")), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(TokenException.class)
-    public ResponseEntity<UnauthorizedResponseDto> handleTokenException(TokenException tokenException){
-        return new ResponseEntity<>(new UnauthorizedResponseDto(tokenException.getMessage(),false), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleTokenException(TokenException tokenException){
+        log.error("TokenException error occurred", tokenException);
+        return new ResponseEntity<>(getErrorApiResponse(tokenException.getMessage(),getErrors("Token Exception")), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<UnauthorizedResponseDto> handleUserAlreadyExistException(UserAlreadyExistException userAlreadyExistException){
-        return new ResponseEntity<>(new UnauthorizedResponseDto(userAlreadyExistException.getMessage(),false), userAlreadyExistException.getStatusCode());
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleUserAlreadyExistException(UserAlreadyExistException userAlreadyExistException){
+        log.error("UserAlreadyExistException error occurred", userAlreadyExistException);
+        return new ResponseEntity<>(getErrorApiResponse(userAlreadyExistException.getMessage(),getErrors("User already exist")), userAlreadyExistException.getStatusCode());
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<UnauthorizedResponseDto> handleBadCredentialsException(BadCredentialsException badCredentialsException){
-        return new ResponseEntity<>(new UnauthorizedResponseDto("Username or password is incorrect",false), HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleBadCredentialsException(BadCredentialsException badCredentialsException){
+        log.error("BadCredentialsException error occurred", badCredentialsException);
+        return new ResponseEntity<>(getErrorApiResponse("Username or password is incorrect",getErrors("Bad credentials")), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiExceptionDto> handleUncheckedException(Exception e){
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleUncheckedException(Exception e){
         log.error("Unhandled exception", e);
-        return new ResponseEntity<>(new ApiExceptionDto("Something went wrong"), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(getErrorApiResponse("Something went wrong",getErrors("Exception")), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private Map<String,Object> getErrors(String title){
+        Map<String,Object> errors = new HashMap<>();
+        errors.put("title",title);
+        errors.put("timeStamp",LocalDateTime.now().toString());
+        return errors;
     }
 
 }
