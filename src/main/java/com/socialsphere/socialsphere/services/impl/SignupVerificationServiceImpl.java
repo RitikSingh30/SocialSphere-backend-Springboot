@@ -1,7 +1,7 @@
 package com.socialsphere.socialsphere.services.impl;
 
 import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
-import com.socialsphere.socialsphere.payload.SignupVerificationDto;
+import com.socialsphere.socialsphere.payload.SignupVerificationRequestDto;
 import com.socialsphere.socialsphere.repository.UserRepo;
 import com.socialsphere.socialsphere.services.SendOtpService;
 import com.socialsphere.socialsphere.services.SignupVerificationService;
@@ -21,23 +21,23 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
     private final SendOtpService sendOtpService;
 
     @Override
-    public Map<String,Object> signupVerification(SignupVerificationDto signupVerificationDto) {
+    public Map<String,Object> signupVerification(SignupVerificationRequestDto signupVerificationRequestDto) {
         String otp = null;
         try{
             log.info("Entering into SignupVerificationService, signupVerification method");
-            log.info("Checking if user exists with username {} or email {}", signupVerificationDto.getUserName(), signupVerificationDto.getEmail());
-            if(userRepo.findByUsername(signupVerificationDto.getUserName().toLowerCase()) != null
-                    || userRepo.findByEmail(signupVerificationDto.getEmail().toLowerCase()).isPresent()) {
+            log.info("Checking if user exists with username {} or email {}", signupVerificationRequestDto.getUserName(), signupVerificationRequestDto.getEmail());
+            if(userRepo.findByUsername(signupVerificationRequestDto.getUserName().toLowerCase()) != null
+                    || userRepo.findByEmail(signupVerificationRequestDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
             }
             // Sending otp to user after verification
-            otp = sendOtpService.sendOtp(signupVerificationDto.getEmail());
+            otp = sendOtpService.sendOtp(signupVerificationRequestDto.getEmail());
         } catch (Exception e){
             log.error("Exception occurred while signing up verification", e);
             throw e;
         }
         log.info("Exiting from SignupVerificationService, signupVerification method");
-        return CommonUtil.prepareOtpDataResponse(otp,signupVerificationDto.getEmail());
+        return CommonUtil.prepareOtpDataResponse(otp, signupVerificationRequestDto.getEmail());
     }
 
 

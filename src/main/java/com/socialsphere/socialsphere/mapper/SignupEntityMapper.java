@@ -1,7 +1,7 @@
 package com.socialsphere.socialsphere.mapper;
 
 import com.socialsphere.socialsphere.entity.UserEntity;
-import com.socialsphere.socialsphere.payload.SignupDto;
+import com.socialsphere.socialsphere.payload.SignupRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SignupEntityMapper {
 
-    public UserEntity setUserProfileEntity(SignupDto signupDto, String encodedPassword) {
+    public UserEntity setUserProfileEntity(SignupRequestDto signupRequestDto, String encodedPassword) {
         log.info("Mapping the signupDto data to userEntity journey started");
         UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(signupDto.getEmail().toLowerCase());
-        userEntity.setUsername(signupDto.getUserName().toLowerCase());
+        userEntity.setEmail(signupRequestDto.getEmail().toLowerCase());
+        userEntity.setUsername(signupRequestDto.getUserName().toLowerCase());
         userEntity.setPassword(encodedPassword);
-        userEntity.setFullName(signupDto.getFullName());
+        userEntity.setFullName(signupRequestDto.getFullName());
         log.info("Mapping the signupDto data to userEntity journey completed");
         return userEntity;
     }

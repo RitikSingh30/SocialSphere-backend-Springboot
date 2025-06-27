@@ -2,7 +2,7 @@ package com.socialsphere.socialsphere.controller;
 
 import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
-import com.socialsphere.socialsphere.payload.SignupDto;
+import com.socialsphere.socialsphere.payload.SignupRequestDto;
 import com.socialsphere.socialsphere.payload.response.ApiResponse;
 import com.socialsphere.socialsphere.payload.response.JwtResponseDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
@@ -46,15 +46,15 @@ class AuthControllerTest {
         // Initialize
         HttpServletResponse httpServletResponse = Mockito.mock(HttpServletResponse.class);
         HttpServletRequest httpServletRequest = Mockito.mock(HttpServletRequest.class);
-        SignupDto signupDto = SignupDto.builder()
+        SignupRequestDto signupRequestDto = SignupRequestDto.builder()
                 .userName("ritikSingh")
                 .build();
         // Mock
-        when(signupService.signup(any(SignupDto.class))).thenReturn(new SignupResponseDto());
+        when(signupService.signup(any(SignupRequestDto.class))).thenReturn(new SignupResponseDto());
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(getRefreshTokenEntity());
         when(jwtUtil.generateToken(anyString())).thenReturn(CommonConstant.ACCESS_TOKEN);
         // Act and verify
-        ResponseEntity<ApiResponse<SignupResponseDto>> apiResponse = authController.signup(signupDto, httpServletResponse, httpServletRequest);
+        ResponseEntity<ApiResponse<SignupResponseDto>> apiResponse = authController.signup(signupRequestDto, httpServletResponse, httpServletRequest);
         assertNotNull(apiResponse);
         assertEquals(HttpStatus.CREATED, apiResponse.getStatusCode());
         assertNotNull(apiResponse.getBody());

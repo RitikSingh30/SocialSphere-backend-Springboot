@@ -48,6 +48,8 @@ public class SendOtpServiceImpl implements SendOtpService {
 
     private String generateOtp() {
         log.info("Entering into SendOtpServiceImpl service, generateOtp method");
+        // Creates a cryptographically strong random number generator
+        // SecureRandom is better than Random for security purposes
         final SecureRandom secureRandom = new SecureRandom();
         int otp = 100000 + secureRandom.nextInt(900000);
         log.info("exiting from SendOtpServiceImpl service, generateOtp method, Generated otp: {}", otp);

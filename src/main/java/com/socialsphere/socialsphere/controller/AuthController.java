@@ -58,19 +58,19 @@ public class AuthController {
     private String cookieSameSite;
 
     @PostMapping("/signupVerification")
-    public ResponseEntity<ApiResponse<Map<String,Object>>> signupVerification(@RequestBody SignupVerificationDto signupVerificationDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Map<String,Object>>> signupVerification(@RequestBody SignupVerificationRequestDto signupVerificationRequestDto, HttpServletRequest request) {
         log.info("Signup verification journey Started from Controller");
-        Map<String,Object> data = signupVerificationService.signupVerification(signupVerificationDto);
+        Map<String,Object> data = signupVerificationService.signupVerification(signupVerificationRequestDto);
         log.info("Signup verification journey Completed from Controller");
         return ResponseEntity.ok(getSuccessApiResponse("Otp send successful",data,request));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<SignupResponseDto>> signup(@Valid @RequestBody SignupDto signupDto, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<SignupResponseDto>> signup(@Valid @RequestBody SignupRequestDto signupRequestDto, HttpServletResponse response, HttpServletRequest request) {
         log.info("Signup Journey Started from Controller");
-        SignupResponseDto signupResponseDto = signupService.signup(signupDto);
+        SignupResponseDto signupResponseDto = signupService.signup(signupRequestDto);
         // Creating the jwt token, cookies and refreshToken
-        JwtResponseDto jwtResponseDto = getJwtResponseDto(signupDto.getUserName().toLowerCase(), response);
+        JwtResponseDto jwtResponseDto = getJwtResponseDto(signupRequestDto.getUserName().toLowerCase(), response);
         signupResponseDto.setJwtResponseDto(jwtResponseDto);
         URI location = URI.create(request.getRequestURI());
         log.info("Signup Journey Completed from Controller");
@@ -78,14 +78,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginDto loginDto, HttpServletResponse response, HttpServletRequest request){
+    public ResponseEntity<ApiResponse<LoginResponseDto>> login(@Valid @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response, HttpServletRequest request){
         log.info("Login Journey Started from Controller");
         // Authenticating the user manually.
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUserName().toLowerCase(),loginDto.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.getUserName().toLowerCase(),loginRequestDto.getPassword()));
         // Checking if the user is authenticated or not
         if(authentication.isAuthenticated()){
-            JwtResponseDto jwtResponseDto = getJwtResponseDto(loginDto.getUserName().toLowerCase(), response);
+            JwtResponseDto jwtResponseDto = getJwtResponseDto(loginRequestDto.getUserName().toLowerCase(), response);
             LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                     .jwtResponseDto(jwtResponseDto)
                     .build();
@@ -115,15 +115,15 @@ public class AuthController {
     }
 
     @PostMapping("/verifyOtp")
-    public ResponseEntity<ApiResponse<Map<String,Object>>> verifyOtp(@RequestBody @Valid VerifyOtpDto verifyOtpDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Map<String,Object>>> verifyOtp(@RequestBody @Valid VerifyOtpRequestDto verifyOtpRequestDto, HttpServletRequest request) {
         log.info("Verifying OTP for email id journey started from Controller");
-        Map<String,Object> data = validateOtpHelper.isOtpValid(verifyOtpDto.getOtp(), verifyOtpDto.getEmail());
+        Map<String,Object> data = validateOtpHelper.isOtpValid(verifyOtpRequestDto.getOtp(), verifyOtpRequestDto.getEmail());
         log.info("Verifying OTP for email id journey completed from Controller");
         return ResponseEntity.ok(getSuccessApiResponse("Otp verified successfully",data,request));
     }
 
     @PostMapping("/refreshToken")
-    public ResponseEntity<ApiResponse<JwtResponseDto>> refreshToken(@RequestBody RefreshTokenDto refreshTokenRequestDto, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<JwtResponseDto>> refreshToken(@RequestBody RefreshTokenRequestDto refreshTokenRequestDto, HttpServletRequest request) {
         log.info("Refreshing the refresh token in refreshToken endpoint");
         try{
             JwtResponseDto jwtResponseDto = refreshTokenService.findByToken(refreshTokenRequestDto.getToken())

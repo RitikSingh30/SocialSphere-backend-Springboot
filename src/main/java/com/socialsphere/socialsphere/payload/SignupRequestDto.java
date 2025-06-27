@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SignupDto {
+public class SignupRequestDto {
     @NotBlank(message = "Email should be present")
     @Email(message = "Email should be valid")
     private String email;

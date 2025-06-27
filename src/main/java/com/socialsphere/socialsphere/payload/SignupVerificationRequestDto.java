@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class VerifyOtpDto {
+public class SignupVerificationRequestDto {
     @NotBlank(message = "Email should be present")
     @Email(message = "Email should be valid")
     private String email;
-    @NotBlank(message = "Otp should be present")
-    private String otp;
+    @NotBlank(message = "Username should be present")
+    private String userName;
 }
