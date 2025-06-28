@@ -1,5 +1,6 @@
 package com.socialsphere.socialsphere.exception;
 
+import com.mongodb.MongoException;
 import com.socialsphere.socialsphere.payload.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(OtpException.class)
     public ResponseEntity<ApiResponse<Map<String,Object>>> handleOtpException(OtpException otpException){
-        log.error("OTP exception error occurred", otpException);
         return new ResponseEntity<>(getErrorApiResponse(otpException.getMessage(),getErrors("OTP Error")), otpException.getStatusCode());
     }
 
@@ -63,16 +63,27 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(getErrorApiResponse(userAlreadyExistException.getMessage(),getErrors("User already exist")), userAlreadyExistException.getStatusCode());
     }
 
+    @ExceptionHandler(UserDoesNotExistException.class)
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleUserAlreadyExistException(UserDoesNotExistException userDoesNotExistException){
+        log.error("userDoesNotExistException error occurred", userDoesNotExistException);
+        return new ResponseEntity<>(getErrorApiResponse(userDoesNotExistException.getMessage(),getErrors("User already exist")), userDoesNotExistException.getStatusCode());
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse<Map<String,Object>>> handleBadCredentialsException(BadCredentialsException badCredentialsException){
         log.error("BadCredentialsException error occurred", badCredentialsException);
         return new ResponseEntity<>(getErrorApiResponse("Username or password is incorrect",getErrors("Bad credentials")), HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(MongoException.class)
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleMongoException(MongoException mongoException){
+        return new ResponseEntity<>(getErrorApiResponse(mongoException.getMessage(),getErrors("Exception")), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Map<String,Object>>> handleUncheckedException(Exception e){
         log.error("Unhandled exception", e);
-        return new ResponseEntity<>(getErrorApiResponse("Something went wrong",getErrors("Exception")), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(getErrorApiResponse(e.getMessage(),getErrors("Exception")), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private Map<String,Object> getErrors(String title){

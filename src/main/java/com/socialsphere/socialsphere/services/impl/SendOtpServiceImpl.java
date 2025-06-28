@@ -34,7 +34,7 @@ public class SendOtpServiceImpl implements SendOtpService {
             saveOtpToDatabase(email,otp);
             Context context = new Context();
             context.setVariable(CommonConstant.OTP,otp);
-            emailService.sendEmail(email, CommonConstant.SIGN_UP_OTP_SUBJECT, context);
+            emailService.sendEmail(email, CommonConstant.SIGN_UP_OTP_SUBJECT, context, "otpMailTemplate");
         } catch(MailException | MessagingException | MongoException exception){
             log.error("Error occurred while sending otp", exception);
             throw new OtpException("Otp Send failed", HttpStatus.INTERNAL_SERVER_ERROR);

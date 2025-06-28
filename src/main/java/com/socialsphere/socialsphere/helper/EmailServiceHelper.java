@@ -23,10 +23,10 @@ public class EmailServiceHelper {
 
     private final SpringTemplateEngine templateEngine;
 
-    public void sendEmail(String to, String subject, Context context) throws MessagingException {
+    public void sendEmail(String to, String subject, Context context, String mailTemplateName) throws MessagingException {
         log.info("Sending email OTP journey started");
         context.setVariable("subject",subject);
-        String htmlContentMailBody = templateEngine.process("mailTemplate", context);
+        String htmlContentMailBody = templateEngine.process(mailTemplateName, context);
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
         mimeMessageHelper.setFrom(senderMailId);
