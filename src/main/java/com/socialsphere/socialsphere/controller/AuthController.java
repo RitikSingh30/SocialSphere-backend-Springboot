@@ -61,6 +61,7 @@ public class AuthController {
 
     @Value("${jwt.cookie.path}")
     private String cookiePath;
+
     @Value("${jwt.cookie.sameSite}")
     private String cookieSameSite;
 
@@ -142,6 +143,7 @@ public class AuthController {
         log.info("Validate reset Password Journey Started from Controller");
         Optional<ResetTokenEntity> tokenOpt = resetTokenRepo.findByToken(token);
 
+        // check if the token is valid or not
         if (tokenOpt.isEmpty() || tokenOpt.get().isExpired()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorApiResponse("Invalid or expired token",null));
         }

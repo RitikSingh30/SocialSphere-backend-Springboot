@@ -44,20 +44,24 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             if(userEntityOptional.isEmpty()) return;
 
             UserEntity userEntity = userEntityOptional.get();
+            // create reset token
             String token = CommonUtil.makeResetToken();
 
+            // save reset token into the DB
             ResetTokenEntity resetTokenEntity = new ResetTokenEntity();
             resetTokenEntity.setToken(token);
             resetTokenEntity.setUserEntity(userEntity);
             resetTokenEntity.setExpiresAt(LocalDateTime.now().plusMinutes(30));
             resetTokenRepo.save(resetTokenEntity);
 
+            // create reset password URL
             String resetUrl = passwordResetBaseUrl + token;
 
             Context context = new Context();
             context.setVariable("token", token);
             context.setVariable("resetUrl", resetUrl);
 
+            // send reset password email
             emailServiceHelper.sendEmail(email,"Reset Password", context, "resetPasswordMailTemplate");
 
         } catch(MailException | MessagingException | MongoException exception){
@@ -74,9 +78,12 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     public void confirmResetPassword(ResetTokenEntity tokenRecord, PasswordResetConfirmRequestDto passwordResetConfirmRequestDto){
         log.info("Entering into PasswordResetServiceImpl service, confirmResetPassword method");
         try{
+            // Get the userEntity associated with the current token & unwrap the proxy to get the real user data
             UserEntity userEntity = (UserEntity) ((LazyLoadingProxy) tokenRecord.getUserEntity()).getTarget();
+            // change user password and save into DB
             userEntity.setPassword(passwordEncoder.encode(passwordResetConfirmRequestDto.getNewPassword()));
             userRepo.save(userEntity);
+            // delete the token after changing user password
             resetTokenRepo.delete(tokenRecord);
         } catch(MongoException exception){
             log.error("Error occurred while resetting the user password and saving the user", exception);
