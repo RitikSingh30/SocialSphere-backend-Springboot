@@ -4,7 +4,7 @@ import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
 import com.socialsphere.socialsphere.entity.ResetTokenEntity;
 import com.socialsphere.socialsphere.exception.TokenException;
 import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
-import com.socialsphere.socialsphere.payload.*;
+import com.socialsphere.socialsphere.payload.request.*;
 import com.socialsphere.socialsphere.payload.response.*;
 import com.socialsphere.socialsphere.repository.ResetTokenRepo;
 import com.socialsphere.socialsphere.security.JwtUtil;
@@ -211,7 +211,7 @@ public class AuthController {
     private ResponseCookie createJwtCookie(String accessToken) {
         return ResponseCookie.from(cookieName, accessToken)
                 .httpOnly(true)
-                .secure(isSecure) // Todo need to check whether this works on http or not
+                .secure(isSecure)
                 .path(cookiePath)
                 .sameSite(cookieSameSite)
                 .maxAge(cookieExpiry)

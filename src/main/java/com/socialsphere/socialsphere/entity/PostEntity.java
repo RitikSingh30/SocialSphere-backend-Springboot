@@ -12,7 +12,7 @@ import java.util.List;
 
 @Document(collection = "post")
 @Data
-public class Post {
+public class PostEntity {
     @Id
     private ObjectId id;
     @NotBlank(message = "Url should be present")
@@ -22,9 +22,7 @@ public class Post {
     @NotBlank(message = "Type of post should be present")
     private String type;
     @DocumentReference(lazy = true)
-    @NotBlank(message = "User Entity should be present")
     private List<UserEntity> like = new ArrayList<>();
-    @NotBlank(message = "Comment should be present")
     @DocumentReference(lazy = true)
-    private List<Comment> comment = new ArrayList<>();
+    private List<CommentEntity> comment = new ArrayList<>();
 }

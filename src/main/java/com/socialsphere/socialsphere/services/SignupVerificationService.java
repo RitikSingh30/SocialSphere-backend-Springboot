@@ -1,6 +1,6 @@
 package com.socialsphere.socialsphere.services;
 
-import com.socialsphere.socialsphere.payload.SignupVerificationRequestDto;
+import com.socialsphere.socialsphere.payload.request.SignupVerificationRequestDto;
 
 import java.util.Map;
 

@@ -31,9 +31,9 @@ public class UserEntity {
     private String password;
     private String bio;
     @DocumentReference(lazy = true)
-    private List<Post> post = new ArrayList<>();
+    private List<PostEntity> postEntity = new ArrayList<>();
     @DocumentReference(lazy = true)
-    private List<Post> savedPost = new ArrayList<>();
+    private List<PostEntity> savedPostEntity = new ArrayList<>();
     @DocumentReference(lazy = true)
     private List<UserEntity> followers = new ArrayList<>();
     @DocumentReference(lazy = true)
@@ -42,6 +42,6 @@ public class UserEntity {
     private String profilePicture;
     private Gender gender;
     @DocumentReference(lazy = true)
-    private List<List<PersonalChat>> personalChats = new ArrayList<>();
+    private List<List<PersonalChatEntity>> personalChats = new ArrayList<>();
 
 }

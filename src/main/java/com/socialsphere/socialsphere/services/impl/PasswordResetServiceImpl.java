@@ -5,7 +5,7 @@ import com.socialsphere.socialsphere.entity.ResetTokenEntity;
 import com.socialsphere.socialsphere.entity.UserEntity;
 import com.socialsphere.socialsphere.exception.OtpException;
 import com.socialsphere.socialsphere.helper.EmailServiceHelper;
-import com.socialsphere.socialsphere.payload.PasswordResetConfirmRequestDto;
+import com.socialsphere.socialsphere.payload.request.PasswordResetConfirmRequestDto;
 import com.socialsphere.socialsphere.repository.ResetTokenRepo;
 import com.socialsphere.socialsphere.repository.UserRepo;
 import com.socialsphere.socialsphere.services.PasswordResetService;
@@ -40,7 +40,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     public void resetPassword(String email) {
         log.info("Entering into PasswordResetServiceImpl service, resetPassword method");
         try{
-            Optional<UserEntity> userEntityOptional = userRepo.findByEmail(email);
+            Optional<UserEntity> userEntityOptional = userRepo.findByEmail(email.toLowerCase());
             if(userEntityOptional.isEmpty()) return;
 
             UserEntity userEntity = userEntityOptional.get();

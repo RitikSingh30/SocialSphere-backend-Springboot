@@ -5,7 +5,7 @@ import com.socialsphere.socialsphere.exception.OtpException;
 import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
 import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
 import com.socialsphere.socialsphere.mapper.SignupEntityMapper;
-import com.socialsphere.socialsphere.payload.SignupRequestDto;
+import com.socialsphere.socialsphere.payload.request.SignupRequestDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;
 import com.socialsphere.socialsphere.repository.UserRepo;
 import com.socialsphere.socialsphere.services.SignupService;
@@ -27,7 +27,7 @@ public class SignupServiceImpl implements SignupService {
     @Override
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
         try{
-            log.info("Entering into SignupService, signup method");
+            log.info("Entering into SignupServiceImpl, signup method");
             log.info("Checking if user exists with username {} or email {}", signupRequestDto.getUserName(), signupRequestDto.getEmail());
             if(userRepo.findByUsername(signupRequestDto.getUserName().toLowerCase()) != null || userRepo.findByEmail(signupRequestDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
@@ -50,7 +50,7 @@ public class SignupServiceImpl implements SignupService {
             log.error("Error occur while signing up", e);
             throw e;
         }
-        log.info("Exiting from Signup service, signup method");
+        log.info("Exiting from SignupServiceImpl, signup method");
         return SignupResponseDto.builder()
                 .username(signupRequestDto.getUserName())
                 .email(signupRequestDto.getEmail())

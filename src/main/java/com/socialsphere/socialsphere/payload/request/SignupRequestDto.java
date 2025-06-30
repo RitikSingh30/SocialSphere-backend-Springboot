@@ -1,4 +1,4 @@
-package com.socialsphere.socialsphere.payload;
+package com.socialsphere.socialsphere.payload.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

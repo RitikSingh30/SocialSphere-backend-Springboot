@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "personal_chat")
 @Data
-public class PersonalChat {
+public class PersonalChatEntity {
     @Id
     private ObjectId id;
     @NotBlank(message = "Sender full name is required")

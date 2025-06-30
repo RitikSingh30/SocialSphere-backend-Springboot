@@ -2,7 +2,7 @@ package com.socialsphere.socialsphere.mapper;
 
 import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.UserEntity;
-import com.socialsphere.socialsphere.payload.SignupRequestDto;
+import com.socialsphere.socialsphere.payload.request.SignupRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

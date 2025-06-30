@@ -2,7 +2,7 @@ package com.socialsphere.socialsphere.controller;
 
 import com.socialsphere.socialsphere.constant.CommonConstant;
 import com.socialsphere.socialsphere.entity.RefreshTokenEntity;
-import com.socialsphere.socialsphere.payload.SignupRequestDto;
+import com.socialsphere.socialsphere.payload.request.SignupRequestDto;
 import com.socialsphere.socialsphere.payload.response.ApiResponse;
 import com.socialsphere.socialsphere.payload.response.JwtResponseDto;
 import com.socialsphere.socialsphere.payload.response.SignupResponseDto;

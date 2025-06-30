@@ -1,4 +1,4 @@
-package com.socialsphere.socialsphere.payload;
+package com.socialsphere.socialsphere.payload.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

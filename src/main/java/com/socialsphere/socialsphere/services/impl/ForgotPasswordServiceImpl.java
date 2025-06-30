@@ -24,7 +24,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
         String otp = null;
         try{
             log.info("Entering into ForgotPasswordServiceImpl service, forgotPassword method");
-            userRepo.findByEmail(emailId).orElseThrow(() -> new UserDoesNotExistException("User Doesn't exist", HttpStatus.NOT_FOUND));
+            userRepo.findByEmail(emailId.toLowerCase()).orElseThrow(() -> new UserDoesNotExistException("User Doesn't exist", HttpStatus.NOT_FOUND));
             otp = sendOtpService.sendOtp(emailId);
             log.info("Exiting from ForgotPasswordServiceImpl service, forgotPassword method");
         } catch (Exception e) {

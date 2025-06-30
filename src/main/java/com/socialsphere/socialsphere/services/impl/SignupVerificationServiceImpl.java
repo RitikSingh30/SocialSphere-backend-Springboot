@@ -1,7 +1,7 @@
 package com.socialsphere.socialsphere.services.impl;
 
 import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
-import com.socialsphere.socialsphere.payload.SignupVerificationRequestDto;
+import com.socialsphere.socialsphere.payload.request.SignupVerificationRequestDto;
 import com.socialsphere.socialsphere.repository.UserRepo;
 import com.socialsphere.socialsphere.services.SendOtpService;
 import com.socialsphere.socialsphere.services.SignupVerificationService;
@@ -24,7 +24,7 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
     public Map<String,Object> signupVerification(SignupVerificationRequestDto signupVerificationRequestDto) {
         String otp = null;
         try{
-            log.info("Entering into SignupVerificationService, signupVerification method");
+            log.info("Entering into SignupVerificationServiceImpl, signupVerification method");
             log.info("Checking if user exists with username {} or email {}", signupVerificationRequestDto.getUserName(), signupVerificationRequestDto.getEmail());
             if(userRepo.findByUsername(signupVerificationRequestDto.getUserName().toLowerCase()) != null
                     || userRepo.findByEmail(signupVerificationRequestDto.getEmail().toLowerCase()).isPresent()) {
@@ -36,7 +36,7 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
             log.error("Exception occurred while signing up verification", e);
             throw e;
         }
-        log.info("Exiting from SignupVerificationService, signupVerification method");
+        log.info("Exiting from SignupVerificationServiceImpl, signupVerification method");
         return CommonUtil.prepareOtpDataResponse(otp, signupVerificationRequestDto.getEmail());
     }
 

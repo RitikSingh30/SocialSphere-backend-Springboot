@@ -29,7 +29,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public RefreshTokenEntity createRefreshToken(String username) {
         log.info("Creating new refresh token");
         try{
-            UserEntity userEntity = userRepo.findByUsername(username);
+            UserEntity userEntity = userRepo.findByUsername(username.toLowerCase());
             // Delete the refresh token if it's already exits for the current user
             refreshTokenRepo.findTokenByUserId(userEntity.getId())
                     .ifPresent(refreshTokenRepo::delete);

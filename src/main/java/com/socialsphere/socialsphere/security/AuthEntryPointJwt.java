@@ -25,6 +25,6 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
                 }
                 """;
 
-        response.getWriter().write(json); // todo need to check this whether the unauthorized exception is getting this error message or not
+        response.getWriter().write(json);
     }
 }
