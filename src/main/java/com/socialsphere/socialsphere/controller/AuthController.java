@@ -30,6 +30,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.socialsphere.socialsphere.constant.CommonConstant.OTP_SUCCESS_RESPONSE_MESSAGE;
 import static com.socialsphere.socialsphere.utility.CommonUtil.getErrorApiResponse;
 import static com.socialsphere.socialsphere.utility.CommonUtil.getSuccessApiResponse;
 
@@ -70,7 +71,7 @@ public class AuthController {
         log.info("Signup verification journey Started from Controller");
         Map<String,Object> data = signupVerificationService.signupVerification(signupVerificationRequestDto);
         log.info("Signup verification journey Completed from Controller");
-        return ResponseEntity.ok(getSuccessApiResponse("Otp send successful",data,request));
+        return ResponseEntity.ok(getSuccessApiResponse(OTP_SUCCESS_RESPONSE_MESSAGE,data,request));
     }
 
     @PostMapping("/signup")
@@ -110,7 +111,7 @@ public class AuthController {
         Map<String, Object> data = forgotPasswordService.forgotPassword(emailId);
         URI location = URI.create(request.getRequestURI());
         log.info("Forgot Password Journey completed from Controller");
-        return ResponseEntity.created(location).body(getSuccessApiResponse("Otp send successfully",data,request));
+        return ResponseEntity.created(location).body(getSuccessApiResponse(OTP_SUCCESS_RESPONSE_MESSAGE,data,request));
     }
 
     @PostMapping("/send-otp/{emailId}")
@@ -119,7 +120,7 @@ public class AuthController {
         String otp = sendOtpService.sendOtp(emailId);
         Map<String,Object> data = CommonUtil.prepareOtpDataResponse(otp,emailId);
         log.info("Sending OTP for email id journey completed from Controller");
-        return ResponseEntity.ok().body(getSuccessApiResponse("Otp send successfully",data,request));
+        return ResponseEntity.ok().body(getSuccessApiResponse(OTP_SUCCESS_RESPONSE_MESSAGE,data,request));
     }
 
     @PostMapping("/verify-otp")
