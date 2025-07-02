@@ -33,6 +33,13 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         try {
+            String requestURI = request.getRequestURI();
+
+            // Skip JWT processing for public URLs
+            if (requestURI.startsWith("/v1/auth/")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             // Extract the cookie
             String jwt = null;
             if(request.getCookies() != null){

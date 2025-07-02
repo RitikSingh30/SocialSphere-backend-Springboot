@@ -30,9 +30,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/auth/send-otp/**","/auth/signup", "/auth/login",
-                                        "/auth/forgot-password/**","/auth/signup-verification", "/auth/reset-password",
-                                        "/auth/reset-password/confirm")
+                                .requestMatchers("/auth/**")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
