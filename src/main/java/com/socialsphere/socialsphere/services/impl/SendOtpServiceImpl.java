@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
 import java.security.SecureRandom;
@@ -25,6 +26,7 @@ public class SendOtpServiceImpl implements SendOtpService {
 
     private final EmailServiceHelper emailService;
 
+    @Transactional
     @Override
     public String sendOtp(String email) {
         log.info("Entering into SendOtpServiceImpl service, sendOtp method");
@@ -37,7 +39,7 @@ public class SendOtpServiceImpl implements SendOtpService {
             emailService.sendEmail(email, CommonConstant.SIGN_UP_OTP_SUBJECT, context, "otpMailTemplate");
         } catch(MailException | MessagingException | MongoException exception){
             log.error("Error occurred while sending otp", exception);
-            throw new OtpException("Otp Send failed", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new OtpException(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e){
             log.error("Error occurred while sending otp", e);
             throw e ;
