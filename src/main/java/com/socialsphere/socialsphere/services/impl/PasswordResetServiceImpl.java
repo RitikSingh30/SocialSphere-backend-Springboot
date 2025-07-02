@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
@@ -36,6 +37,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Value("${password.reset.base.url}")
     private String passwordResetBaseUrl;
 
+    @Transactional
     @Override
     public void resetPassword(String email) {
         log.info("Entering into PasswordResetServiceImpl service, resetPassword method");
@@ -74,6 +76,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         log.info("Exiting from PasswordResetServiceImpl service, resetPassword method");
     }
 
+    @Transactional
     @Override
     public void confirmResetPassword(ResetTokenEntity tokenRecord, PasswordResetConfirmRequestDto passwordResetConfirmRequestDto){
         log.info("Entering into PasswordResetServiceImpl service, confirmResetPassword method");
