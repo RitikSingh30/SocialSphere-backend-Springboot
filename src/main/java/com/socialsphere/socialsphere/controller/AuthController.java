@@ -45,7 +45,6 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final AuthenticationManager authenticationManager;
-    private final ForgotPasswordService forgotPasswordService;
     private final ValidateOtpHelper validateOtpHelper;
     private final SignupVerificationService signupVerificationService;
     private final PasswordResetService passwordResetService;
@@ -103,15 +102,6 @@ public class AuthController {
         } else {
             throw new UsernameNotFoundException("Invalid user request..!!");
         }
-    }
-
-    @PostMapping("/forgot-password/{emailId}")
-    public ResponseEntity<ApiResponse<Map<String,Object>>> forgetPassword(@PathVariable String emailId, HttpServletRequest request) {
-        log.info("Forgot Password Journey Started from Controller");
-        Map<String, Object> data = forgotPasswordService.forgotPassword(emailId);
-        URI location = URI.create(request.getRequestURI());
-        log.info("Forgot Password Journey completed from Controller");
-        return ResponseEntity.created(location).body(getSuccessApiResponse(OTP_SUCCESS_RESPONSE_MESSAGE,data,request));
     }
 
     @PostMapping("/send-otp/{emailId}")

@@ -1,7 +1,6 @@
 package com.socialsphere.socialsphere.services.impl;
 
 import com.socialsphere.socialsphere.entity.UserEntity;
-import com.socialsphere.socialsphere.exception.OtpException;
 import com.socialsphere.socialsphere.exception.UserAlreadyExistException;
 import com.socialsphere.socialsphere.helper.ValidateOtpHelper;
 import com.socialsphere.socialsphere.mapper.SignupEntityMapper;
@@ -43,9 +42,6 @@ public class SignupServiceImpl implements SignupService {
         } catch (UserAlreadyExistException userAlreadyExistException) {
             log.error("User {} already exist", signupRequestDto.getUserName());
             throw userAlreadyExistException;
-        } catch (OtpException otpException) {
-            log.error("Otp verification failed", otpException);
-            throw otpException;
         } catch (Exception e) {
             log.error("Error occur while signing up", e);
             throw e;
