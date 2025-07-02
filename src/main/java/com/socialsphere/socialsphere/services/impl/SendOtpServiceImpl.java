@@ -41,7 +41,7 @@ public class SendOtpServiceImpl implements SendOtpService {
             log.error("Error occurred while sending otp", exception);
             throw new OtpException(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e){
-            log.error("Error occurred while sending otp", e);
+            log.error("Error occurred while sending otp");
             throw e ;
         }
         log.info("Exiting from SendOtpServiceImpl service, sendOtp service");

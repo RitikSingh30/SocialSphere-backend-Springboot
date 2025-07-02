@@ -80,6 +80,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(getErrorApiResponse(mongoException.getMessage(),getErrors("Exception")), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ApiResponse<Map<String,Object>>> handleMongoException(ApiException apiException){
+        log.error("ApiException error occurred", apiException);
+        return new ResponseEntity<>(getErrorApiResponse(apiException.getMessage(),getErrors("API Exception")), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Map<String,Object>>> handleUncheckedException(Exception e){
         log.error("Unhandled exception", e);

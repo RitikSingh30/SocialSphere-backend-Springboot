@@ -70,7 +70,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             log.error("Error occurred while sending otp", exception);
             throw new OtpException("Otp Send failed", HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e){
-            log.error("Error occurred while sending otp", e);
+            log.error("Error occurred while sending otp");
             throw e ;
         }
         log.info("Exiting from PasswordResetServiceImpl service, resetPassword method");
@@ -92,7 +92,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             log.error("Error occurred while resetting the user password and saving the user", exception);
             throw new MongoException("Error occurred while resetting the user password and saving the user", exception);
         } catch(Exception e){
-            log.error("Error occurred in confirm resetPassword method", e);
+            log.error("Error occurred in confirm resetPassword method");
             throw e ;
         }
         log.info("Exiting from PasswordResetServiceImpl service, confirmResetPassword method");

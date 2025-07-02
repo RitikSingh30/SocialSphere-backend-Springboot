@@ -172,7 +172,7 @@ public class AuthController {
                     }).orElseThrow(() -> new TokenException("Refresh token not found"));
             return ResponseEntity.ok().body(getSuccessApiResponse("Refresh token created",jwtResponseDto,request));
         } catch (Exception e){
-            log.error("Error occurred while refreshing token", e);
+            log.error("Error occurred while refreshing token");
             throw e ;
         }
     }
@@ -194,7 +194,7 @@ public class AuthController {
                     .token(refreshToken.getToken())
                     .build();
         } catch (Exception e){
-            log.error("Error occurred in getJwtResponseDto method in controller", e);
+            log.error("Error occurred in getJwtResponseDto method in controller");
             throw e;
         }
     }

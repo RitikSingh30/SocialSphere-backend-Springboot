@@ -43,7 +43,7 @@ public class SignupServiceImpl implements SignupService {
             log.error("User {} already exist", signupRequestDto.getUserName());
             throw userAlreadyExistException;
         } catch (Exception e) {
-            log.error("Error occur while signing up", e);
+            log.error("Error occur while signing up");
             throw e;
         }
         log.info("Exiting from SignupServiceImpl, signup method");

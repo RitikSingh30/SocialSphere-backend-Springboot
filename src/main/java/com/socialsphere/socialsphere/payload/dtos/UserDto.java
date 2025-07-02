@@ -20,5 +20,5 @@ public class UserDto {
     private List<BasicUserInfoDto> following;
     private String profilePicture;
     private Gender gender;
-    private List<List<PersonalChatDto>> personalChatDto;
+    private List<PersonalChatHistoryDto> personalChatDto;
 }

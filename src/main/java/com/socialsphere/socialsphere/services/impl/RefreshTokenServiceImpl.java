@@ -41,7 +41,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
             log.info("Created new refresh token");
             return refreshTokenRepo.save(refreshTokenEntity);
         } catch(Exception e){
-            log.error("Error while creating refresh token", e);
+            log.error("Error while creating refresh token");
             throw e;
         }
     }

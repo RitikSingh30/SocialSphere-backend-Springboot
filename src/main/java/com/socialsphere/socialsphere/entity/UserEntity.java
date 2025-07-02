@@ -42,6 +42,6 @@ public class UserEntity {
     private String profilePicture;
     private Gender gender;
     @DocumentReference(lazy = true)
-    private List<List<PersonalChatEntity>> personalChats = new ArrayList<>();
+    private List<PersonalChatHistoryEntity> personalChatHistoryEntities = new ArrayList<>();
 
 }

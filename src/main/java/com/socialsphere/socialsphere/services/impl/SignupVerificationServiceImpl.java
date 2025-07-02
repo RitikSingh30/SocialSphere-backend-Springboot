@@ -33,7 +33,7 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
             // Sending otp to user after verification
             otp = sendOtpService.sendOtp(signupVerificationRequestDto.getEmail());
         } catch (Exception e){
-            log.error("Exception occurred while signing up verification", e);
+            log.error("Exception occurred while signing up verification");
             throw e;
         }
         log.info("Exiting from SignupVerificationServiceImpl, signupVerification method");
