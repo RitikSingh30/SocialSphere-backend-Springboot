@@ -63,20 +63,24 @@ public class UserEntityMapper {
 
     private List<BasicUserInfoDto> getUserFollowersAndFollowing(List<UserEntity> userFollowersOrFollowing) {
         return userFollowersOrFollowing.stream()
+                .filter(Objects::nonNull)
                 .map(this::toBasicUser)
                 .toList();
     }
 
     private List<PostDto> getPost(List<PostEntity> postEntity) {
         return postEntity.stream()
+                .filter(Objects::nonNull)
                 .map(post -> PostDto.builder()
                         .url(post.getUrl())
                         .caption(post.getCaption())
                         .type(post.getType())
                         .like(post.getLike().stream()
+                                .filter(Objects::nonNull)
                                 .map(this::toBasicUser)
                                 .toList())
                         .commentDto(post.getComment().stream()
+                                .filter(Objects::nonNull)
                                 .map(this::toCommentDto
                                 )
                                 .toList()
