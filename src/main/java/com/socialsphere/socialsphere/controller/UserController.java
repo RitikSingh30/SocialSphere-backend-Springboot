@@ -1,5 +1,6 @@
 package com.socialsphere.socialsphere.controller;
 
+import com.socialsphere.socialsphere.payload.dtos.BasicUserInfoDto;
 import com.socialsphere.socialsphere.payload.dtos.UserDto;
 import com.socialsphere.socialsphere.payload.dtos.UserUpdateDto;
 import com.socialsphere.socialsphere.payload.response.ApiResponse;
@@ -10,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 import static com.socialsphere.socialsphere.utility.CommonUtil.getSuccessApiResponse;
 
@@ -38,5 +39,13 @@ public class UserController {
         UserUpdateDto userUpdateDtoResponse = userOperationService.updateUserProfileInfo(userUpdateDto,emailId);
         log.info("Update user profile info journey completed from Controller");
         return ResponseEntity.ok(getSuccessApiResponse("User profile info updated successful..!",userUpdateDtoResponse,request));
+    }
+
+    @GetMapping("/search-user/{emailId}")
+    public ResponseEntity<ApiResponse<List<BasicUserInfoDto>>> searchUser(@PathVariable String emailId, @RequestParam String userName, HttpServletRequest request){
+        log.info("Search user journey started from Controller");
+        List<BasicUserInfoDto> basicUserInfoDto = userOperationService.searchUser(emailId,userName);
+        log.info("Search user journey completed from Controller");
+        return ResponseEntity.ok(getSuccessApiResponse("User search success",basicUserInfoDto,request));
     }
 }

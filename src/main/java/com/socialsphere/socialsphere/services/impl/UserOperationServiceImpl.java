@@ -5,6 +5,7 @@ import com.socialsphere.socialsphere.exception.ApiException;
 import com.socialsphere.socialsphere.exception.UserDoesNotExistException;
 import com.socialsphere.socialsphere.helper.CloudinaryHelper;
 import com.socialsphere.socialsphere.mapper.UserEntityMapper;
+import com.socialsphere.socialsphere.payload.dtos.BasicUserInfoDto;
 import com.socialsphere.socialsphere.payload.dtos.UserDto;
 import com.socialsphere.socialsphere.payload.dtos.UserUpdateDto;
 import com.socialsphere.socialsphere.repository.UserRepo;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -87,5 +90,27 @@ public class UserOperationServiceImpl implements UserOperationService {
         }
         log.info("Exiting from UserOperationServiceImpl, updateUserProfileInfo method");
         return userUpdateDtoResponse;
+    }
+
+    @Override
+    public List<BasicUserInfoDto> searchUser(String emailId, String userName) {
+        log.info("Entering into UserOperationServiceImpl, searchUser method");
+        List<BasicUserInfoDto> basicUserInfoDtoList = null;
+        try{
+            List<UserEntity> searchUserResult = userRepo.findByUserNameRegexIgnoreCaseAndEmailNot(userName,emailId);
+            basicUserInfoDtoList = searchUserResult.stream()
+                    .filter(Objects::nonNull)
+                    .map(userEntity ->
+                    BasicUserInfoDto.builder()
+                            .username(userEntity.getUsername())
+                            .profilePicture(userEntity.getProfilePicture())
+                            .build())
+                    .toList();
+        } catch (Exception exception){
+            log.error("Exception occurred while searching the user profile info");
+            throw exception;
+        }
+        log.info("Exiting from UserOperationServiceImpl, searchUser method");
+        return basicUserInfoDtoList;
     }
 }
