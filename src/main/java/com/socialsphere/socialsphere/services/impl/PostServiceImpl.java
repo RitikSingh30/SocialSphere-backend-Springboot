@@ -31,10 +31,9 @@ public class PostServiceImpl implements PostService {
     @Override
     public CreatePostDto createPost(CreatePostRequestDto createPostRequestDto, String emailId) {
         log.info("Starting post creation for user with email: {}", emailId);
-        String postCloudinaryUrl = null;
         try{
             // save media to cloudinary
-            postCloudinaryUrl  = cloudinaryHelper.uploadFile(createPostRequestDto.getUrl());
+            String postCloudinaryUrl  = cloudinaryHelper.uploadFile(createPostRequestDto.getUrl());
             // save post to database
             PostEntity postEntity = new PostEntity();
             postEntity.setUrl(postCloudinaryUrl);
@@ -50,6 +49,12 @@ public class PostServiceImpl implements PostService {
             userEntity.setPostEntity(userExistingPostEntity);
             userRepo.save(userEntity);
 
+            log.info("Post successfully created for user: {}", emailId);
+            return CreatePostDto.builder()
+                    .type(createPostRequestDto.getType())
+                    .url(postCloudinaryUrl)
+                    .build();
+
         } catch (IOException ioException){
             log.error("Error uploading file");
             throw new ApiException(ioException);
@@ -57,10 +62,5 @@ public class PostServiceImpl implements PostService {
             log.error("Failed to create post for user: {}", emailId);
             throw exception;
         }
-        log.info("Post successfully created for user: {}", emailId);
-        return CreatePostDto.builder()
-                .type(createPostRequestDto.getType())
-                .url(postCloudinaryUrl)
-                .build();
     }
 }

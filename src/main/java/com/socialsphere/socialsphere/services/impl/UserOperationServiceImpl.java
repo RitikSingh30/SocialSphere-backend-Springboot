@@ -34,31 +34,30 @@ public class UserOperationServiceImpl implements UserOperationService {
     @Override
     public UserDto getUserData(String emailId, boolean allData) {
         log.info("Entering into UserOperationServiceImpl, getUserData method");
-        UserDto userDto = null;
         try{
             UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase())
                     .orElseThrow(() -> new UserDoesNotExistException("User with the username does not exist", HttpStatus.NOT_FOUND));
-            userDto = userEntityMapper.getUserResponseDto(userEntity);
+            UserDto userDto = userEntityMapper.getUserResponseDto(userEntity);
             // checking if the data is required for the current user or different user
             if(!allData) {
                 userDto.setPost(null);
                 userDto.setFollowers(null);
                 userDto.setFollowing(null);
             }
+            log.info("Exiting from UserOperationServiceImpl, getUserData method");
+            return userDto;
         } catch(Exception exception){
             log.error("Exception occurred while getting the user data in UserOperationServiceImpl, getUserData method");
             throw exception;
         }
-        log.info("Exiting from UserOperationServiceImpl, getUserData method");
-        return userDto;
     }
 
     @Transactional
     @Override
     public UserUpdateDto updateUserProfileInfo(UserUpdateDto userUpdateDto, String emailId) {
         log.info("Entering into UserOperationServiceImpl, updateUserProfileInfo method");
-        UserUpdateDto userUpdateDtoResponse = new UserUpdateDto();
         try{
+            UserUpdateDto userUpdateDtoResponse = new UserUpdateDto();
             UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase())
                     .orElseThrow(() -> new UserDoesNotExistException("User with the username does not exist", HttpStatus.NOT_FOUND));
 
@@ -81,6 +80,10 @@ public class UserOperationServiceImpl implements UserOperationService {
             }
 
             userRepo.save(userEntity);
+
+            log.info("Exiting from UserOperationServiceImpl, updateUserProfileInfo method");
+            return userUpdateDtoResponse;
+
         } catch (IOException ioException){
             log.error("Error occurred while uploading file to cloudinary");
             throw new ApiException(ioException);
@@ -88,17 +91,14 @@ public class UserOperationServiceImpl implements UserOperationService {
             log.error("Exception occurred while updating the user profile info");
             throw exception;
         }
-        log.info("Exiting from UserOperationServiceImpl, updateUserProfileInfo method");
-        return userUpdateDtoResponse;
     }
 
     @Override
     public List<BasicUserInfoDto> searchUser(String emailId, String userName) {
         log.info("Entering into UserOperationServiceImpl, searchUser method");
-        List<BasicUserInfoDto> basicUserInfoDtoList = null;
         try{
             List<UserEntity> searchUserResult = userRepo.findByUserNameRegexIgnoreCaseAndEmailNot(userName,emailId);
-            basicUserInfoDtoList = searchUserResult.stream()
+            List<BasicUserInfoDto> basicUserInfoDtoList = searchUserResult.stream()
                     .filter(Objects::nonNull)
                     .map(userEntity ->
                     BasicUserInfoDto.builder()
@@ -106,11 +106,11 @@ public class UserOperationServiceImpl implements UserOperationService {
                             .profilePicture(userEntity.getProfilePicture())
                             .build())
                     .toList();
+            log.info("Exiting from UserOperationServiceImpl, searchUser method");
+            return basicUserInfoDtoList;
         } catch (Exception exception){
             log.error("Exception occurred while searching the user profile info");
             throw exception;
         }
-        log.info("Exiting from UserOperationServiceImpl, searchUser method");
-        return basicUserInfoDtoList;
     }
 }

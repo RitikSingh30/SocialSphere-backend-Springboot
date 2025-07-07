@@ -30,13 +30,14 @@ public class SendOtpServiceImpl implements SendOtpService {
     @Override
     public String sendOtp(String email) {
         log.info("Entering into SendOtpServiceImpl service, sendOtp method");
-        String otp = null;
         try{
-            otp = generateOtp();
+            String otp = generateOtp();
             saveOtpToDatabase(email,otp);
             Context context = new Context();
             context.setVariable(CommonConstant.OTP,otp);
             emailService.sendEmail(email, CommonConstant.SIGN_UP_OTP_SUBJECT, context, "otpMailTemplate");
+            log.info("Exiting from SendOtpServiceImpl service, sendOtp service");
+            return otp;
         } catch(MailException | MessagingException | MongoException exception){
             log.error("Error occurred while sending otp", exception);
             throw new OtpException(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -44,8 +45,6 @@ public class SendOtpServiceImpl implements SendOtpService {
             log.error("Error occurred while sending otp");
             throw e ;
         }
-        log.info("Exiting from SendOtpServiceImpl service, sendOtp service");
-        return otp;
     }
 
     private String generateOtp() {

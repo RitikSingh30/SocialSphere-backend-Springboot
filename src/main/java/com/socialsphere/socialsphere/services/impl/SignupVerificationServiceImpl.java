@@ -22,7 +22,6 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
 
     @Override
     public Map<String,Object> signupVerification(SignupVerificationRequestDto signupVerificationRequestDto) {
-        String otp = null;
         try{
             log.info("Entering into SignupVerificationServiceImpl, signupVerification method");
             log.info("Checking if user exists with username {} or email {}", signupVerificationRequestDto.getUserName(), signupVerificationRequestDto.getEmail());
@@ -31,13 +30,13 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
             }
             // Sending otp to user after verification
-            otp = sendOtpService.sendOtp(signupVerificationRequestDto.getEmail());
+            String otp = sendOtpService.sendOtp(signupVerificationRequestDto.getEmail());
+            log.info("Exiting from SignupVerificationServiceImpl, signupVerification method");
+            return CommonUtil.prepareOtpDataResponse(otp, signupVerificationRequestDto.getEmail());
         } catch (Exception e){
             log.error("Exception occurred while signing up verification");
             throw e;
         }
-        log.info("Exiting from SignupVerificationServiceImpl, signupVerification method");
-        return CommonUtil.prepareOtpDataResponse(otp, signupVerificationRequestDto.getEmail());
     }
 
 
