@@ -14,14 +14,14 @@ import java.util.Optional;
 @Slf4j
 public class UserEntityMapper {
     public UserDto getUserResponseDto(UserEntity userEntity) {
-        log.info("Converting UserEntity to UserDto in UserEntityMapper, getUserResponseDto method");
+        log.info("Converting UserEntity to UserDto in UserEntityMapper.getUserResponseDto");
         return UserDto.builder()
                 .username(userEntity.getUsername())
                 .fullName(userEntity.getFullName())
                 .email(userEntity.getEmail())
                 .bio(userEntity.getBio())
-                .post(getPost(userEntity.getPostEntity()))
-                .savedPost(getPost(userEntity.getSavedPostEntity()))
+                .post(PostMapper.getListPostDto(userEntity.getPostEntity()))
+                .savedPost(PostMapper.getListPostDto(userEntity.getSavedPostEntity()))
                 .followers(getUserFollowersAndFollowing(userEntity.getFollowers()))
                 .following(getUserFollowersAndFollowing(userEntity.getFollowing()))
                 .profilePicture(userEntity.getProfilePicture())
@@ -48,8 +48,6 @@ public class UserEntityMapper {
                 .toList();
     }
 
-
-
     private PersonalChatDto personalChatEntityToPersonalChatDto(PersonalChatEntity personalChatEntity) {
         return PersonalChatDto.builder()
                 .senderFullName(personalChatEntity.getSenderFullName())
@@ -64,46 +62,7 @@ public class UserEntityMapper {
     private List<BasicUserInfoDto> getUserFollowersAndFollowing(List<UserEntity> userFollowersOrFollowing) {
         return userFollowersOrFollowing.stream()
                 .filter(Objects::nonNull)
-                .map(this::toBasicUser)
+                .map(BasicUserInfoMapper::getBasicUserDto)
                 .toList();
     }
-
-    private List<PostDto> getPost(List<PostEntity> postEntity) {
-        return postEntity.stream()
-                .filter(Objects::nonNull)
-                .map(post -> PostDto.builder()
-                        .url(post.getUrl())
-                        .caption(post.getCaption())
-                        .type(post.getType())
-                        .like(post.getLike().stream()
-                                .filter(Objects::nonNull)
-                                .map(this::toBasicUser)
-                                .toList())
-                        .commentDto(post.getComment().stream()
-                                .filter(Objects::nonNull)
-                                .map(this::toCommentDto
-                                )
-                                .toList()
-                        )
-                        .build())
-                .toList();
-    }
-
-    private BasicUserInfoDto toBasicUser(UserEntity user) {
-        return BasicUserInfoDto.builder()
-                .username(user.getUsername())
-                .profilePicture(user.getProfilePicture())
-                .build();
-    }
-
-    private CommentDto toCommentDto(CommentEntity comment) {
-        return CommentDto.builder()
-                .basicUserInfoDto(BasicUserInfoDto.builder()
-                        .username(comment.getUserEntity().getUsername())
-                        .profilePicture(comment.getUserEntity().getProfilePicture())
-                        .build())
-                .content(comment.getContent())
-                .build();
-    }
-
 }

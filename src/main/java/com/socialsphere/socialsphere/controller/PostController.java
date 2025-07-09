@@ -1,5 +1,6 @@
 package com.socialsphere.socialsphere.controller;
 
+import com.socialsphere.socialsphere.payload.dtos.CompletePostDetailDto;
 import com.socialsphere.socialsphere.payload.dtos.CreatePostDto;
 import com.socialsphere.socialsphere.payload.request.CreatePostRequestDto;
 import com.socialsphere.socialsphere.payload.response.ApiResponse;
@@ -12,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/post")
@@ -27,5 +30,13 @@ public class PostController {
       CreatePostDto createdPostResponse = postService.createPost(createPostRequestDto,emailId);
       log.info("Create post journey completed from Controller");
       return new ResponseEntity<>(CommonUtil.getSuccessApiResponse("Post created successfully..!",createdPostResponse,request), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/get-home-page-posts/{emailId}")
+    public ResponseEntity<ApiResponse<List<CompletePostDetailDto>>> getHomePagePosts(@PathVariable String emailId, HttpServletRequest request){
+        log.info("Get home page posts journey started from Controller");
+        List<CompletePostDetailDto> completePostDetailDto = postService.getHomePagePost(emailId);
+        log.info("Get home page posts journey completed from Controller");
+        return ResponseEntity.ok(CommonUtil.getSuccessApiResponse("Posts retrieved successfully..!",completePostDetailDto,request));
     }
 }

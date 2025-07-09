@@ -5,6 +5,8 @@ import com.socialsphere.socialsphere.entity.UserEntity;
 import com.socialsphere.socialsphere.exception.ApiException;
 import com.socialsphere.socialsphere.exception.UserDoesNotExistException;
 import com.socialsphere.socialsphere.helper.CloudinaryHelper;
+import com.socialsphere.socialsphere.mapper.PostMapper;
+import com.socialsphere.socialsphere.payload.dtos.CompletePostDetailDto;
 import com.socialsphere.socialsphere.payload.dtos.CreatePostDto;
 import com.socialsphere.socialsphere.payload.request.CreatePostRequestDto;
 import com.socialsphere.socialsphere.repository.PostRepo;
@@ -60,6 +62,24 @@ public class PostServiceImpl implements PostService {
             throw new ApiException(ioException);
         } catch (Exception exception){
             log.error("Failed to create post for user: {}", emailId);
+            throw exception;
+        }
+    }
+
+    @Override
+    public List<CompletePostDetailDto> getHomePagePost(String emailId) {
+        log.info("Entering into PostServiceImpl.getHomePagePost");
+        try{
+            // get user data
+            UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase()).orElseThrow(() ->
+                    new UserDoesNotExistException("User does not exist", HttpStatus.NOT_FOUND));
+            // Mapper the logged in user post + it's followers post with name, profile picture and post info
+            List<CompletePostDetailDto> completePostDetailDtos = PostMapper.mapPostThatUserHasPermissionToSee(userEntity);
+            log.info("Exiting from PostServiceImpl.getHomePagePost");
+            return completePostDetailDtos;
+
+        } catch(Exception exception){
+            log.error("Error occurred while getting the home page post for user: {}", emailId);
             throw exception;
         }
     }

@@ -36,7 +36,7 @@ public class UserOperationServiceImpl implements UserOperationService {
         log.info("Entering into UserOperationServiceImpl, getUserData method");
         try{
             UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase())
-                    .orElseThrow(() -> new UserDoesNotExistException("User with the username does not exist", HttpStatus.NOT_FOUND));
+                    .orElseThrow(() -> new UserDoesNotExistException("User with the email does not exist", HttpStatus.NOT_FOUND));
             UserDto userDto = userEntityMapper.getUserResponseDto(userEntity);
             // checking if the data is required for the current user or different user
             if(!allData) {
