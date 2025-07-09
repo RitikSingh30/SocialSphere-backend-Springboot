@@ -29,14 +29,14 @@ public class SendOtpServiceImpl implements SendOtpService {
     @Transactional
     @Override
     public String sendOtp(String email) {
-        log.info("Entering into SendOtpServiceImpl service, sendOtp method");
+        log.info("Entering into SendOtpServiceImpl.sendOtp");
         try{
             String otp = generateOtp();
             saveOtpToDatabase(email,otp);
             Context context = new Context();
             context.setVariable(CommonConstant.OTP,otp);
             emailService.sendEmail(email, CommonConstant.SIGN_UP_OTP_SUBJECT, context, "otpMailTemplate");
-            log.info("Exiting from SendOtpServiceImpl service, sendOtp service");
+            log.info("Exiting from SendOtpServiceImpl.sendOtp");
             return otp;
         } catch(MailException | MessagingException | MongoException exception){
             log.error("Error occurred while sending otp", exception);
@@ -48,7 +48,7 @@ public class SendOtpServiceImpl implements SendOtpService {
     }
 
     private String generateOtp() {
-        log.info("Entering into SendOtpServiceImpl service, generateOtp method");
+        log.info("Entering into SendOtpServiceImpl.generateOtp");
         // Creates a cryptographically strong random number generator
         // SecureRandom is better than Random for security purposes
         final SecureRandom secureRandom = new SecureRandom();
@@ -58,11 +58,11 @@ public class SendOtpServiceImpl implements SendOtpService {
     }
 
     private void saveOtpToDatabase(String email, String otp) {
-        log.info("Into SendOtpServiceImpl service saveOtpToDatabase method, Initiating Saving OTP in database call");
+        log.info("Into SendOtpServiceImpl.saveOtpToDatabase, Initiating Saving OTP in database call");
         OtpEntity otpEntity = new OtpEntity();
         otpEntity.setEmail(email);
         otpEntity.setCode(otp);
         otpRepo.save(otpEntity);
-        log.info("Exiting from SendOtpServiceImpl service saveOtpDatabase method, OTP is successfully saved into database");
+        log.info("Exiting from SendOtpServiceImpl.saveOtpDatabase, OTP is successfully saved into database");
     }
 }

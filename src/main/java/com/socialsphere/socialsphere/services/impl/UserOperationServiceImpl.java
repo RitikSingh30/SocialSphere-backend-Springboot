@@ -55,7 +55,7 @@ public class UserOperationServiceImpl implements UserOperationService {
     @Transactional
     @Override
     public UserUpdateDto updateUserProfileInfo(UserUpdateDto userUpdateDto, String emailId) {
-        log.info("Entering into UserOperationServiceImpl, updateUserProfileInfo method");
+        log.info("Entering into UserOperationServiceImpl.updateUserProfileInfo");
         try{
             UserUpdateDto userUpdateDtoResponse = new UserUpdateDto();
             UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase())
@@ -81,7 +81,7 @@ public class UserOperationServiceImpl implements UserOperationService {
 
             userRepo.save(userEntity);
 
-            log.info("Exiting from UserOperationServiceImpl, updateUserProfileInfo method");
+            log.info("Exiting from UserOperationServiceImpl.updateUserProfileInfo");
             return userUpdateDtoResponse;
 
         } catch (IOException ioException){
@@ -95,7 +95,7 @@ public class UserOperationServiceImpl implements UserOperationService {
 
     @Override
     public List<BasicUserInfoDto> searchUser(String emailId, String userName) {
-        log.info("Entering into UserOperationServiceImpl, searchUser method");
+        log.info("Entering into UserOperationServiceImpl.searchUser");
         try{
             List<UserEntity> searchUserResult = userRepo.findByUserNameRegexIgnoreCaseAndEmailNot(userName,emailId);
             List<BasicUserInfoDto> basicUserInfoDtoList = searchUserResult.stream()
@@ -106,7 +106,7 @@ public class UserOperationServiceImpl implements UserOperationService {
                             .profilePicture(userEntity.getProfilePicture())
                             .build())
                     .toList();
-            log.info("Exiting from UserOperationServiceImpl, searchUser method");
+            log.info("Exiting from UserOperationServiceImpl.searchUser");
             return basicUserInfoDtoList;
         } catch (Exception exception){
             log.error("Exception occurred while searching the user profile info");

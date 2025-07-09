@@ -26,7 +26,7 @@ public class SignupServiceImpl implements SignupService {
     @Override
     public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
         try{
-            log.info("Entering into SignupServiceImpl, signup method");
+            log.info("Entering into SignupServiceImpl.signup");
             log.info("Checking if user exists with username {} or email {}", signupRequestDto.getUserName(), signupRequestDto.getEmail());
             if(userRepo.findByUsername(signupRequestDto.getUserName().toLowerCase()) != null || userRepo.findByEmail(signupRequestDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
@@ -39,6 +39,13 @@ public class SignupServiceImpl implements SignupService {
             log.info("Calling userRepo to save the user signup data into database");
             userRepo.save(userProfileEntity);
 
+            log.info("Exiting from SignupServiceImpl.signup");
+            return SignupResponseDto.builder()
+                    .username(signupRequestDto.getUserName())
+                    .email(signupRequestDto.getEmail())
+                    .fullName(signupRequestDto.getFullName())
+                    .build();
+
         } catch (UserAlreadyExistException userAlreadyExistException) {
             log.error("User {} already exist", signupRequestDto.getUserName());
             throw userAlreadyExistException;
@@ -46,12 +53,6 @@ public class SignupServiceImpl implements SignupService {
             log.error("Error occur while signing up");
             throw e;
         }
-        log.info("Exiting from SignupServiceImpl, signup method");
-        return SignupResponseDto.builder()
-                .username(signupRequestDto.getUserName())
-                .email(signupRequestDto.getEmail())
-                .fullName(signupRequestDto.getFullName())
-                .build();
     }
 
 }

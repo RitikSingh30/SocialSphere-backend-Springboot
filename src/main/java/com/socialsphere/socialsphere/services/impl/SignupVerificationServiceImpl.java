@@ -23,7 +23,7 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
     @Override
     public Map<String,Object> signupVerification(SignupVerificationRequestDto signupVerificationRequestDto) {
         try{
-            log.info("Entering into SignupVerificationServiceImpl, signupVerification method");
+            log.info("Entering into SignupVerificationServiceImpl.signupVerification");
             log.info("Checking if user exists with username {} or email {}", signupVerificationRequestDto.getUserName(), signupVerificationRequestDto.getEmail());
             if(userRepo.findByUsername(signupVerificationRequestDto.getUserName().toLowerCase()) != null
                     || userRepo.findByEmail(signupVerificationRequestDto.getEmail().toLowerCase()).isPresent()) {
@@ -31,7 +31,7 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
             }
             // Sending otp to user after verification
             String otp = sendOtpService.sendOtp(signupVerificationRequestDto.getEmail());
-            log.info("Exiting from SignupVerificationServiceImpl, signupVerification method");
+            log.info("Exiting from SignupVerificationServiceImpl.signupVerification");
             return CommonUtil.prepareOtpDataResponse(otp, signupVerificationRequestDto.getEmail());
         } catch (Exception e){
             log.error("Exception occurred while signing up verification");

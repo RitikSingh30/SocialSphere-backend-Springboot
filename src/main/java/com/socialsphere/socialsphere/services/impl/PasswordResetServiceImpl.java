@@ -40,7 +40,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Transactional
     @Override
     public void resetPassword(String email) {
-        log.info("Entering into PasswordResetServiceImpl service, resetPassword method");
+        log.info("Entering into PasswordResetServiceImpl.resetPassword");
         try{
             Optional<UserEntity> userEntityOptional = userRepo.findByEmail(email.toLowerCase());
             if(userEntityOptional.isEmpty()) return;
@@ -73,13 +73,13 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             log.error("Error occurred while sending otp");
             throw e ;
         }
-        log.info("Exiting from PasswordResetServiceImpl service, resetPassword method");
+        log.info("Exiting from PasswordResetServiceImpl.resetPassword");
     }
 
     @Transactional
     @Override
     public void confirmResetPassword(ResetTokenEntity tokenRecord, PasswordResetConfirmRequestDto passwordResetConfirmRequestDto){
-        log.info("Entering into PasswordResetServiceImpl service, confirmResetPassword method");
+        log.info("Entering into PasswordResetServiceImpl.confirmResetPassword");
         try{
             // Get the userEntity associated with the current token & unwrap the proxy to get the real user data
             UserEntity userEntity = (UserEntity) ((LazyLoadingProxy) tokenRecord.getUserEntity()).getTarget();
@@ -95,7 +95,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             log.error("Error occurred in confirm resetPassword method");
             throw e ;
         }
-        log.info("Exiting from PasswordResetServiceImpl service, confirmResetPassword method");
+        log.info("Exiting from PasswordResetServiceImpl.confirmResetPassword");
     }
 
 }
