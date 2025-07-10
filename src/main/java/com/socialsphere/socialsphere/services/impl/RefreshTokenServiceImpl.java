@@ -32,7 +32,8 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         log.info("Creating new refresh token");
         try{
             Optional<UserEntity> optionalUserEntity = userRepo.findByUsername(username);
-            if(optionalUserEntity.isEmpty()) throw new UserDoesNotExistException("User doesn't exist", HttpStatus.NOT_FOUND);
+            if(optionalUserEntity.isEmpty())
+                throw new UserDoesNotExistException("User doesn't exist", HttpStatus.NOT_FOUND);
             UserEntity userEntity = optionalUserEntity.get();
             // Delete the refresh token if it's already exits for the current user
             refreshTokenRepo.findTokenByUserId(userEntity.getId())
