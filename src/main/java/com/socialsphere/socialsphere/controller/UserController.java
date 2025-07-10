@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,20 +24,22 @@ public class UserController {
 
     private final UserOperationService userOperationService;
 
-    @GetMapping("/get-user-data/{emailId}")
-    public ResponseEntity<ApiResponse<UserDto>> getUserData(@PathVariable String emailId, @RequestParam boolean allData,
+    @PreAuthorize("#username == authentication.name")
+    @GetMapping("/get-user-data/{username}")
+    public ResponseEntity<ApiResponse<UserDto>> getUserData(@PathVariable String username, @RequestParam boolean allData,
                                                      HttpServletRequest request){
         log.info("Get user date journey started from Controller");
-        UserDto userDto = userOperationService.getUserData(emailId, allData);
+        UserDto userDto = userOperationService.getUserData(username, allData);
         log.info("Get user date journey completed from Controller");
         return ResponseEntity.ok(getSuccessApiResponse("User data fetched successful..!",userDto,request));
     }
 
-    @PutMapping("/update-user-profile-info/{emailId}")
+    @PreAuthorize("#username == authentication.name")
+    @PutMapping("/update-user-profile-info/{username}")
     public ResponseEntity<ApiResponse<UserUpdateDto>> updateUserProfileInfo(@RequestBody UserUpdateDto userUpdateDto,
-                                                                                 @PathVariable String emailId, HttpServletRequest request){
+                                                                                 @PathVariable String username, HttpServletRequest request){
         log.info("Update user profile info journey started from Controller");
-        UserUpdateDto userUpdateDtoResponse = userOperationService.updateUserProfileInfo(userUpdateDto,emailId);
+        UserUpdateDto userUpdateDtoResponse = userOperationService.updateUserProfileInfo(userUpdateDto,username);
         log.info("Update user profile info journey completed from Controller");
         return ResponseEntity.ok(getSuccessApiResponse("User profile info updated successful..!",userUpdateDtoResponse,request));
     }

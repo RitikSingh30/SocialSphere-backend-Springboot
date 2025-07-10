@@ -31,8 +31,8 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public CreatePostDto createPost(CreatePostRequestDto createPostRequestDto, String emailId) {
-        log.info("Starting post creation for user with email: {}", emailId);
+    public CreatePostDto createPost(CreatePostRequestDto createPostRequestDto, String username) {
+        log.info("Starting post creation for user with username: {}", username);
         try{
             // save media to cloudinary
             String postCloudinaryUrl  = cloudinaryHelper.uploadFile(createPostRequestDto.getUrl());
@@ -44,14 +44,14 @@ public class PostServiceImpl implements PostService {
             postRepo.save(postEntity);
 
             // find the user in the DB and add post into it
-            UserEntity userEntity = userRepo.findByEmail(emailId).orElseThrow(() ->
-                    new UserDoesNotExistException("User with the email doesn't exit", HttpStatus.NOT_FOUND));
+            UserEntity userEntity = userRepo.findByUsername(username).orElseThrow(() ->
+                    new UserDoesNotExistException("User with the username doesn't exit", HttpStatus.NOT_FOUND));
             List<PostEntity> userExistingPostEntity = userEntity.getPostEntity();
             userExistingPostEntity.add(postEntity);
             userEntity.setPostEntity(userExistingPostEntity);
             userRepo.save(userEntity);
 
-            log.info("Post successfully created for user: {}", emailId);
+            log.info("Post successfully created for user: {}", username);
             return CreatePostDto.builder()
                     .type(createPostRequestDto.getType())
                     .url(postCloudinaryUrl)
@@ -61,17 +61,17 @@ public class PostServiceImpl implements PostService {
             log.error("Error uploading file");
             throw new ApiException(ioException);
         } catch (Exception exception){
-            log.error("Failed to create post for user: {}", emailId);
+            log.error("Failed to create post for user: {}", username);
             throw exception;
         }
     }
 
     @Override
-    public List<CompletePostDetailDto> getHomePagePost(String emailId) {
+    public List<CompletePostDetailDto> getHomePagePost(String username) {
         log.info("Entering into PostServiceImpl.getHomePagePost");
         try{
             // get user data
-            UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase()).orElseThrow(() ->
+            UserEntity userEntity = userRepo.findByUsername(username).orElseThrow(() ->
                     new UserDoesNotExistException("User does not exist", HttpStatus.NOT_FOUND));
             // Mapper the logged in user post + it's followers post with name, profile picture and post info
             List<CompletePostDetailDto> completePostDetailDtos = PostMapper.mapPostThatUserHasPermissionToSee(userEntity);
@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
             return completePostDetailDtos;
 
         } catch(Exception exception){
-            log.error("Error occurred while getting the home page post for user: {}", emailId);
+            log.error("Error occurred while getting the home page post for user: {}", username);
             throw exception;
         }
     }

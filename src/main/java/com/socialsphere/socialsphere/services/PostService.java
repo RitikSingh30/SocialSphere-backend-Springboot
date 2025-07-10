@@ -7,6 +7,6 @@ import com.socialsphere.socialsphere.payload.request.CreatePostRequestDto;
 import java.util.List;
 
 public interface PostService {
-    CreatePostDto createPost(CreatePostRequestDto createPostRequestDto, String emailId);
-    List<CompletePostDetailDto> getHomePagePost(String emailId);
+    CreatePostDto createPost(CreatePostRequestDto createPostRequestDto, String username);
+    List<CompletePostDetailDto> getHomePagePost(String username);
 }

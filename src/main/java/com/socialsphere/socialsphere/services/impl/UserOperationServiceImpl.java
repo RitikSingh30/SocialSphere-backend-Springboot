@@ -32,11 +32,11 @@ public class UserOperationServiceImpl implements UserOperationService {
     private final CloudinaryHelper cloudinaryHelper;
 
     @Override
-    public UserDto getUserData(String emailId, boolean allData) {
+    public UserDto getUserData(String username, boolean allData) {
         log.info("Entering into UserOperationServiceImpl, getUserData method");
         try{
-            UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase())
-                    .orElseThrow(() -> new UserDoesNotExistException("User with the email does not exist", HttpStatus.NOT_FOUND));
+            UserEntity userEntity = userRepo.findByUsername(username)
+                    .orElseThrow(() -> new UserDoesNotExistException("User with the username does not exist", HttpStatus.NOT_FOUND));
             UserDto userDto = userEntityMapper.getUserResponseDto(userEntity);
             // checking if the data is required for the current user or different user
             if(!allData) {
@@ -54,11 +54,11 @@ public class UserOperationServiceImpl implements UserOperationService {
 
     @Transactional
     @Override
-    public UserUpdateDto updateUserProfileInfo(UserUpdateDto userUpdateDto, String emailId) {
+    public UserUpdateDto updateUserProfileInfo(UserUpdateDto userUpdateDto, String username) {
         log.info("Entering into UserOperationServiceImpl.updateUserProfileInfo");
         try{
             UserUpdateDto userUpdateDtoResponse = new UserUpdateDto();
-            UserEntity userEntity = userRepo.findByEmail(emailId.toLowerCase())
+            UserEntity userEntity = userRepo.findByUsername(username)
                     .orElseThrow(() -> new UserDoesNotExistException("User with the username does not exist", HttpStatus.NOT_FOUND));
 
             if(userUpdateDto.getUsername() != null){

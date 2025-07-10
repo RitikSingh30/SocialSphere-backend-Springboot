@@ -25,7 +25,7 @@ public class SignupVerificationServiceImpl implements SignupVerificationService 
         try{
             log.info("Entering into SignupVerificationServiceImpl.signupVerification");
             log.info("Checking if user exists with username {} or email {}", signupVerificationRequestDto.getUserName(), signupVerificationRequestDto.getEmail());
-            if(userRepo.findByUsername(signupVerificationRequestDto.getUserName().toLowerCase()) != null
+            if(userRepo.findByUsername(signupVerificationRequestDto.getUserName()).isPresent()
                     || userRepo.findByEmail(signupVerificationRequestDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
             }

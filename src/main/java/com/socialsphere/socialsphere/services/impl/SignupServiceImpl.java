@@ -28,7 +28,7 @@ public class SignupServiceImpl implements SignupService {
         try{
             log.info("Entering into SignupServiceImpl.signup");
             log.info("Checking if user exists with username {} or email {}", signupRequestDto.getUserName(), signupRequestDto.getEmail());
-            if(userRepo.findByUsername(signupRequestDto.getUserName().toLowerCase()) != null || userRepo.findByEmail(signupRequestDto.getEmail().toLowerCase()).isPresent()) {
+            if(userRepo.findByUsername(signupRequestDto.getUserName()).isPresent() || userRepo.findByEmail(signupRequestDto.getEmail().toLowerCase()).isPresent()) {
                 throw new UserAlreadyExistException("User with the username or email already exist please proceed to login", HttpStatus.CONFLICT);
             }
             validateOtpHelper.isOtpValid(signupRequestDto.getOtp(), signupRequestDto.getEmail());

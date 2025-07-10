@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -15,13 +16,13 @@ public class CustomUserDetailsService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepo.findByUsername(username);
-        if (user == null) {
+        Optional<UserEntity> user = userRepo.findByUsername(username);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException("User Not Found with username: " + username);
         }
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
+                user.get().getUsername(),
+                user.get().getPassword(),
                 Collections.emptyList()
         );
     }
