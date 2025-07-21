@@ -32,7 +32,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/auth/**")
+                                .requestMatchers("/auth/**","/chat/**")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
